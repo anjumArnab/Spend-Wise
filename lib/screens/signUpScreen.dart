@@ -193,7 +193,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             const SizedBox(height: 20),
             // Sign Up / Log In Button
             SizedBox(
-              width: double.infinity,
+              width: 150,
               height:50,
               child: ElevatedButton(
                 onPressed: () {},

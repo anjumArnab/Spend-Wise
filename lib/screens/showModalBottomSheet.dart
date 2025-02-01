@@ -20,7 +20,6 @@ class _ShowmodalbottomsheetState extends State<Showmodalbottomsheet> {
         decoration: BoxDecoration(
           color: btnColor.withOpacity(0.2), // Increased opacity for visibility
           borderRadius: BorderRadius.circular(15),
-          
         ),
         alignment: Alignment.center,
         child: Text(

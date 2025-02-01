@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spend_wise/models/transaction.dart';
 import 'package:spend_wise/screens/drawer.dart';
 import 'package:intl/intl.dart';
 import 'package:spend_wise/screens/showModalBottomSheet.dart';
@@ -71,6 +72,14 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
+
+  final List<Transaction> transactions = [
+    Transaction(date: DateTime(2024, 3, 18), category: "Shopping", description: "Clothes and watch", amount: 1101.00),
+    Transaction(date: DateTime(2024, 3, 18), category: "Shopping", description: "Laptop", amount: 18025.00),
+    Transaction(date: DateTime(2024, 3, 17), category: "Shopping", description: "Study table", amount: 10125.00),
+    Transaction(date: DateTime(2024, 3, 17), category: "Shopping", description: "Laptop", amount: 40025.00),
+    Transaction(date: DateTime(2024, 3, 16), category: "Shopping", description: "Paints and brush", amount: 826.00),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -308,36 +317,41 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 20),
           Expanded(
             child: ListView.builder(
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: ClipOval(
-                    child: Container(
-                      color: Color.fromARGB(255, 220, 228,
-                          201), // You can change this to any color you prefer
-                      padding: const EdgeInsets.all(
-                          10), // Optional padding inside the oval
-                      child: const Icon(
-                        Icons.shopping_cart,
-                        // color: Color.fromARGB(255, 220, 228, 201), // Color of the icon itself
-                        size: 30,
-                      ),
-                    ),
+        itemCount: transactions.length,
+        itemBuilder: (context, index) {
+          final transaction = transactions[index];
+          final String formattedDate = DateFormat('d MMMM').format(transaction.date);
+          Divider();
+          final bool showDateHeader = index == 0 || transaction.date != transactions[index - 1].date;
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (showDateHeader)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  child: Text(
+                    formattedDate,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey[700]),
                   ),
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Shopping Item ${index + 1}",
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text("Description of the item"),
-                    ],
-                  ),
-                  trailing: Text("\$${(index + 1) * 10}",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                );
-              },
-            ),
+                ),
+              ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Colors.purple[100],
+                  child: Icon(Icons.shopping_cart, color: Colors.black),
+                ),
+                title: Text(transaction.category, style: TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text(transaction.description),
+                trailing: Text(
+                  "${transaction.amount.toStringAsFixed(2)}",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+             // Divider(),
+            ],
+          );
+        },
+      ),
           ),
         ],
       ),
