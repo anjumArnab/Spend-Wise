@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:spend_wise/screens/drawer.dart';
 import 'package:intl/intl.dart';
 import 'package:spend_wise/screens/showModalBottomSheet.dart';
+import 'package:spend_wise/screens/signUpScreen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,8 +15,11 @@ class _HomePageState extends State<HomePage> {
   int selectedButton = 0;
   String formattedDate = DateFormat('dd MMMM').format(DateTime.now());
 
-  void _bottomSheet(){
-    showModalBottomSheet(context: context, isScrollControlled: true, builder: (context) => const Showmodalbottomsheet());
+  void _bottomSheet() {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) => const Showmodalbottomsheet());
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -53,6 +57,14 @@ class _HomePageState extends State<HomePage> {
         username: 'John Doe',
         email: "johndoe@gmail.com",
         profilePictureUrl: "",
+        onLogIn: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const SignUpScreen(),
+            ),
+          );
+        },
         isBackupEnabled: false,
         onBackupToggle: (_) {},
         onLogout: () {},
@@ -96,9 +108,9 @@ class _HomePageState extends State<HomePage> {
                               minimumSize: const Size(0, 0),
                               foregroundColor: selectedButton == 0
                                   ? Colors.white
-                                  : Colors.black,
+                                  : Color.fromRGBO(23, 59, 69, 1),
                               backgroundColor: selectedButton == 0
-                                  ? Colors.black
+                                  ? Color.fromRGBO(23, 59, 69, 1)
                                   : Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
@@ -121,9 +133,9 @@ class _HomePageState extends State<HomePage> {
                               minimumSize: const Size(0, 0),
                               foregroundColor: selectedButton == 1
                                   ? Colors.white
-                                  : Colors.black,
+                                  : Color.fromRGBO(23, 59, 69, 1),
                               backgroundColor: selectedButton == 1
-                                  ? Colors.black
+                                  ? Color.fromRGBO(23, 59, 69, 1)
                                   : Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
@@ -152,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                       elevation: 0,
                       minimumSize: const Size(0, 0),
                       foregroundColor: Colors.white,
-                      backgroundColor: Colors.black,
+                      backgroundColor: Color.fromRGBO(23, 59, 69, 1),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
@@ -166,112 +178,114 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0), // Adds padding to screen edges
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ensures equal spacing
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0), // Space around each container
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12), // Adds border radius
-                          ),
-                          child: const SizedBox(
-                            width: 75,
-                            height: 75,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text("Day"),
-                                Text("\$52"),
-                              ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0), // Adds padding to screen edges
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween, // Ensures equal spacing
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(
+                              8.0), // Space around each container
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  12), // Adds border radius
+                            ),
+                            child: const SizedBox(
+                              width: 75,
+                              height: 75,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("Day"),
+                                  Text("\$52"),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const SizedBox(
-                            width: 75,
-                            height: 75,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text("Week"),
-                                Text("\$322"),
-                              ],
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const SizedBox(
+                              width: 75,
+                              height: 75,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("Week"),
+                                  Text("\$322"),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const SizedBox(
-                            width: 75,
-                            height: 75,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text("Month"),
-                                Text("\$1322"),
-                              ],
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const SizedBox(
+                              width: 75,
+                              height: 75,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("Month"),
+                                  Text("\$1322"),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 20),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: 10,
-                  itemBuilder: (context, index) {
-                    return const ListTile(
-                      leading: Icon(Icons.shopping_cart),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Shopping Item \${index + 1}",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                           Text("Description of the item"),
-                        ],
-                      ),
-                      trailing: Text("\$\${(index + 1) * 10}"),
-                    );
-                  },
-                ),
-              ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: ListView.builder(
+              itemCount: 10,
+              itemBuilder: (context, index) {
+                return const ListTile(
+                  leading: Icon(Icons.shopping_cart),
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Shopping Item \${index + 1}",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text("Description of the item"),
+                    ],
+                  ),
+                  trailing: Text("\$\${(index + 1) * 10}"),
+                );
+              },
+            ),
+          ),
         ],
-        
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _bottomSheet,
         child: const Icon(Icons.add),
       ),
-      
     );
   }
 }

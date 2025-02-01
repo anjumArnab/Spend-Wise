@@ -4,6 +4,7 @@ class CustomDrawer extends StatelessWidget {
   final String username;
   final String email;
   final String profilePictureUrl;
+  final VoidCallback onLogIn;
   final bool isBackupEnabled;
   final ValueChanged<bool> onBackupToggle;
   final VoidCallback onLogout;
@@ -14,6 +15,7 @@ class CustomDrawer extends StatelessWidget {
     required this.username,
     required this.email,
     required this.profilePictureUrl,
+    required this.onLogIn,
     required this.isBackupEnabled,
     required this.onBackupToggle,
     required this.onLogout,
@@ -36,6 +38,11 @@ class CustomDrawer extends StatelessWidget {
             decoration: const BoxDecoration(
               color: Colors.white// Set background color
             ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.login_outlined, color: Colors.black),
+            title: const Text('Log In'),
+            onTap: onLogIn,
           ),
           // Backup Tasks Section
           ListTile(
