@@ -16,11 +16,33 @@ class _HomePageState extends State<HomePage> {
   String formattedDate = DateFormat('dd MMMM').format(DateTime.now());
 
   void _bottomSheet() {
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) => const Showmodalbottomsheet());
-  }
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true, // Allows height customization
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)), // Rounded top corners
+    ),
+    backgroundColor: Colors.white, // Background color of the modal
+    builder: (context) {
+      return DraggableScrollableSheet(
+        initialChildSize: 0.9, // Opens at 50% of screen height
+        minChildSize: 0.3, // Minimum height (30% of screen)
+        maxChildSize: 0.9, // Maximum height (90% of screen)
+        expand: false,
+        builder: (context, scrollController) {
+          return Container(
+            padding: const EdgeInsets.all(16),
+            child: SingleChildScrollView(
+              controller: scrollController, // Enables scrolling
+              child: const Showmodalbottomsheet(),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? pickedDate = await showDialog(
@@ -71,9 +93,16 @@ class _HomePageState extends State<HomePage> {
         onExit: () {},
       ),
       appBar: AppBar(
-        title: const Text("\$17,500"),
+        title: const Text(
+          "\$17,500",
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: _bottomSheet,
+          ),
           IconButton(
             icon: const Icon(Icons.notifications),
             onPressed: () {},
@@ -191,12 +220,11 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.all(
-                              8.0), // Space around each container
+                          padding: const EdgeInsets.all(8.0),
                           child: Card(
+                            color: Color.fromARGB(255, 225, 234, 205),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  12), // Adds border radius
+                              borderRadius: BorderRadius.circular(30),
                             ),
                             child: const SizedBox(
                               width: 75,
@@ -205,7 +233,12 @@ class _HomePageState extends State<HomePage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text("Day"),
-                                  Text("\$52"),
+                                  Text(
+                                    "\$75",
+                                    style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ],
                               ),
                             ),
@@ -216,8 +249,9 @@ class _HomePageState extends State<HomePage> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
+                            color: Color.fromARGB(255, 225, 234, 205),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(30),
                             ),
                             child: const SizedBox(
                               width: 75,
@@ -226,7 +260,12 @@ class _HomePageState extends State<HomePage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text("Week"),
-                                  Text("\$322"),
+                                  Text(
+                                    "\$450",
+                                    style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ],
                               ),
                             ),
@@ -237,8 +276,9 @@ class _HomePageState extends State<HomePage> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
+                            color: Color.fromARGB(255, 225, 234, 205),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(30),
                             ),
                             child: const SizedBox(
                               width: 75,
@@ -247,7 +287,12 @@ class _HomePageState extends State<HomePage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text("Month"),
-                                  Text("\$1322"),
+                                  Text(
+                                    "\$1322",
+                                    style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ],
                               ),
                             ),
@@ -265,26 +310,36 @@ class _HomePageState extends State<HomePage> {
             child: ListView.builder(
               itemCount: 10,
               itemBuilder: (context, index) {
-                return const ListTile(
-                  leading: Icon(Icons.shopping_cart),
+                return ListTile(
+                  leading: ClipOval(
+                    child: Container(
+                      color: Color.fromARGB(255, 220, 228,
+                          201), // You can change this to any color you prefer
+                      padding: const EdgeInsets.all(
+                          10), // Optional padding inside the oval
+                      child: const Icon(
+                        Icons.shopping_cart,
+                        // color: Color.fromARGB(255, 220, 228, 201), // Color of the icon itself
+                        size: 30,
+                      ),
+                    ),
+                  ),
                   title: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Shopping Item \${index + 1}",
+                      Text("Shopping Item ${index + 1}",
                           style: TextStyle(fontWeight: FontWeight.bold)),
                       Text("Description of the item"),
                     ],
                   ),
-                  trailing: Text("\$\${(index + 1) * 10}"),
+                  trailing: Text("\$${(index + 1) * 10}",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 );
               },
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _bottomSheet,
-        child: const Icon(Icons.add),
       ),
     );
   }

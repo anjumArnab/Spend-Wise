@@ -107,7 +107,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: _firstNameController,
                       decoration: const InputDecoration(
                         labelText: "First Name",
-                        border: OutlineInputBorder(),
+                        border: UnderlineInputBorder(),
                       ),
                     ),
                   ),
@@ -117,7 +117,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: _lastNameController,
                       decoration: const InputDecoration(
                         labelText: "Last Name",
-                        border: OutlineInputBorder(),
+                        border: UnderlineInputBorder(),
                       ),
                     ),
                   ),
@@ -130,7 +130,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 decoration: const InputDecoration(
                   labelText: "Birth of Date",
                   suffixIcon: Icon(Icons.calendar_today),
-                  border: OutlineInputBorder(),
+                  border: UnderlineInputBorder(),
                 ),
                 keyboardType: TextInputType.datetime,
               ),
@@ -141,7 +141,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               controller: _emailController,
               decoration: const InputDecoration(
                 labelText: "Email",
-                border: OutlineInputBorder(),
+                border: UnderlineInputBorder(),
               ),
               keyboardType: TextInputType.emailAddress,
             ),
@@ -152,7 +152,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               obscureText: !_isPasswordVisible,
               decoration: InputDecoration(
                 labelText: "Password",
-                border: const OutlineInputBorder(),
+                border: const UnderlineInputBorder(),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _isPasswordVisible
@@ -175,7 +175,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 obscureText: !_isConfirmPasswordVisible,
                 decoration: InputDecoration(
                   labelText: "Confirm Password",
-                  border: const OutlineInputBorder(),
+                  border: const UnderlineInputBorder(),
                   suffixIcon: IconButton(
                     icon: Icon(
                       _isConfirmPasswordVisible
