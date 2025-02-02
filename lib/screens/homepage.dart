@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:spend_wise/models/transaction.dart';
 import 'package:spend_wise/screens/drawer.dart';
-import 'package:intl/intl.dart';
 import 'package:spend_wise/screens/showModalBottomSheet.dart';
 import 'package:spend_wise/screens/signUpScreen.dart';
 
@@ -13,298 +11,182 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int selectedButton = 0;
-  String formattedDate = DateFormat('dd MMMM').format(DateTime.now());
-
   void _bottomSheet() {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true, // Allows height customization
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)), // Rounded top corners
-    ),
-    backgroundColor: Colors.white, // Background color of the modal
-    builder: (context) {
-      return DraggableScrollableSheet(
-        initialChildSize: 0.9, // Opens at 50% of screen height
-        minChildSize: 0.3, // Minimum height (30% of screen)
-        maxChildSize: 0.9, // Maximum height (90% of screen)
-        expand: false,
-        builder: (context, scrollController) {
-          return Container(
-            padding: const EdgeInsets.all(16),
-            child: SingleChildScrollView(
-              controller: scrollController, // Enables scrolling
-              child: const Showmodalbottomsheet(),
-            ),
-          );
-        },
-      );
-    },
-  );
-}
-
-
-  Future<void> _selectDate(BuildContext context) async {
-    DateTime? pickedDate = await showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) {
-        return Theme(
-          data: ThemeData(
-            dialogTheme: DialogTheme(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(0), // Makes it square
+      isScrollControlled: true, // Allows height customization
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+            top: Radius.circular(20)), // Rounded top corners
+      ),
+      backgroundColor: Colors.white, // Background color of the modal
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.9, // Opens at 50% of screen height
+          minChildSize: 0.3, // Minimum height (30% of screen)
+          maxChildSize: 0.9, // Maximum height (90% of screen)
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              padding: const EdgeInsets.all(16),
+              child: SingleChildScrollView(
+                controller: scrollController, // Enables scrolling
+                child: const Showmodalbottomsheet(),
               ),
-            ),
-          ),
-          child: DatePickerDialog(
-            initialDate: DateTime.now(),
-            firstDate: DateTime(2000),
-            lastDate: DateTime(2100),
-          ),
+            );
+          },
         );
       },
     );
-
-    if (pickedDate != null) {
-      setState(() {
-        formattedDate = DateFormat('dd MMMM').format(pickedDate);
-      });
-    }
   }
 
-  final List<Transaction> transactions = [
-    Transaction(date: DateTime(2024, 3, 18), category: "Shopping", description: "Clothes and watch", amount: 1101.00),
-    Transaction(date: DateTime(2024, 3, 18), category: "Shopping", description: "Laptop", amount: 18025.00),
-    Transaction(date: DateTime(2024, 3, 17), category: "Shopping", description: "Study table", amount: 10125.00),
-    Transaction(date: DateTime(2024, 3, 17), category: "Shopping", description: "Laptop", amount: 40025.00),
-    Transaction(date: DateTime(2024, 3, 16), category: "Shopping", description: "Paints and brush", amount: 826.00),
-  ];
+  void _login() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => SignUpScreen(),
+      ),
+    );
+  }
+
+  void _drawer() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => CustomDrawer(
+          email: "",
+          username: "",
+          profilePictureUrl: "",
+          onLogIn: _login,
+          isBackupEnabled: false,
+          onBackupToggle: (bool value) {},
+          onLogout: () {},
+          onExit: () {},
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: CustomDrawer(
-        username: 'John Doe',
-        email: "johndoe@gmail.com",
-        profilePictureUrl: "",
-        onLogIn: () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const SignUpScreen(),
-            ),
-          );
-        },
-        isBackupEnabled: false,
-        onBackupToggle: (_) {},
-        onLogout: () {},
-        onExit: () {},
-      ),
       appBar: AppBar(
-        title: const Text(
-          "\$17,500",
-          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
+        title:
+            const Text("Welcome Back, Annie", style: TextStyle(fontSize: 18)),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add),
+            icon: const Icon(Icons.add_circle_sharp, size: 20),
             onPressed: _bottomSheet,
           ),
           IconButton(
-            icon: const Icon(Icons.notifications),
+            icon: const Icon(Icons.notifications_none_rounded, size: 20),
             onPressed: () {},
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                selectedButton = 0;
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              minimumSize: const Size(0, 0),
-                              foregroundColor: selectedButton == 0
-                                  ? Colors.white
-                                  : Color.fromRGBO(23, 59, 69, 1),
-                              backgroundColor: selectedButton == 0
-                                  ? Color.fromRGBO(23, 59, 69, 1)
-                                  : Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            child: const SizedBox.expand(
-                              child: Center(child: Text('Expenses')),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                selectedButton = 1;
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              minimumSize: const Size(0, 0),
-                              foregroundColor: selectedButton == 1
-                                  ? Colors.white
-                                  : Color.fromRGBO(23, 59, 69, 1),
-                              backgroundColor: selectedButton == 1
-                                  ? Color.fromRGBO(23, 59, 69, 1)
-                                  : Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            child: const SizedBox.expand(
-                              child: Center(child: Text('Income')),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Container(
-                  width: 150,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () => _selectDate(context),
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      minimumSize: const Size(0, 0),
-                      foregroundColor: Colors.white,
-                      backgroundColor: Color.fromRGBO(23, 59, 69, 1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    child: SizedBox.expand(
-                      child: Center(child: Text(formattedDate)),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0), // Adds padding to screen edges
+      body: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: const Color.fromRGBO(9, 18, 44, 1.0),
+                borderRadius: BorderRadius.circular(8),
+              ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween, // Ensures equal spacing
                     children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            color: Color.fromARGB(255, 225, 234, 205),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: const SizedBox(
-                              width: 75,
-                              height: 75,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text("Day"),
-                                  Text(
-                                    "\$75",
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
+                      GestureDetector(
+                        onTap: _drawer,
+                        child: const CircleAvatar(
+                          radius: 15,
+                          backgroundImage:
+                              AssetImage("assets/images/annie.jpg"),
+                        ),
+                      ),
+                      const Spacer(),
+                      const Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text("Balance",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 14)),
+                          Text("\$32,450.00",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16)),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 15),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 6,
+                    child: LinearProgressIndicator(
+                      borderRadius: BorderRadius.circular(8),
+                      value: 0.7,
+                      backgroundColor: Colors.white,
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                          Color.fromRGBO(33, 33, 33, 1.0)),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: 130,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: const Color.fromRGBO(226, 241, 231, 1.0),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text("Income",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12)),
+                              SizedBox(height: 4),
+                              Text("\$1,07,590",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold)),
+                            ],
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            color: Color.fromARGB(255, 225, 234, 205),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: const SizedBox(
-                              width: 75,
-                              height: 75,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text("Week"),
-                                  Text(
-                                    "\$450",
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                      Container(
+                        width: 130,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: const Color.fromRGBO(226, 241, 231, 1.0),
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            color: Color.fromARGB(255, 225, 234, 205),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: const SizedBox(
-                              width: 75,
-                              height: 75,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text("Month"),
-                                  Text(
-                                    "\$1322",
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
+                        child: const Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text("Expense",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12)),
+                              SizedBox(height: 4),
+                              Text("\$75,140",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold)),
+                            ],
                           ),
                         ),
                       ),
@@ -313,47 +195,136 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-          ),
-          const SizedBox(height: 20),
-          Expanded(
-            child: ListView.builder(
-        itemCount: transactions.length,
-        itemBuilder: (context, index) {
-          final transaction = transactions[index];
-          final String formattedDate = DateFormat('d MMMM').format(transaction.date);
-          Divider();
-          final bool showDateHeader = index == 0 || transaction.date != transactions[index - 1].date;
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (showDateHeader)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                  child: Text(
-                    formattedDate,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey[700]),
+            const SizedBox(height: 15),
+            // Budgets section
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("My Budgets",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.arrow_forward_ios_sharp, size: 20)),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(226, 241, 231, 1.0),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Monthly Budget",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 12)),
+                            Text("\$2,000",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 14)),
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 6,
+                          child: LinearProgressIndicator(
+                            borderRadius: BorderRadius.circular(8),
+                            value: 0.7,
+                            backgroundColor: Colors.white,
+                            valueColor:
+                                const AlwaysStoppedAnimation<Color>(Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Colors.purple[100],
-                  child: Icon(Icons.shopping_cart, color: Colors.black),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(226, 241, 231, 1.0),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Yearly Budget",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 12)),
+                            Text("\$24,000",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 14)),
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 6,
+                          child: LinearProgressIndicator(
+                            borderRadius: BorderRadius.circular(8),
+                            value: 0.5,
+                            backgroundColor: Colors.white,
+                            valueColor:
+                               const  AlwaysStoppedAnimation<Color>(Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                title: Text(transaction.category, style: TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text(transaction.description),
-                trailing: Text(
-                  "${transaction.amount.toStringAsFixed(2)}",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+              ],
+            ),
+            const SizedBox(height: 15),
+            // Transaction list with Card
+            const Text(
+              "Transactions",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            ),
+           const SizedBox(height: 15),
+            Expanded(
+              child: ListView.builder(
+                itemCount: 10, // Number of transactions to display
+                itemBuilder: (context, index) {
+                  return Card(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      side: const BorderSide(color: Colors.black),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    margin: const EdgeInsets.only(bottom: 8), // Reduced margin
+                    child: ListTile(
+                      leading: const Icon(Icons.credit_card,
+                          color: Colors.blue, size: 20), // Smaller icon
+                      title: Text("Training Session #$index",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 14)),
+                      subtitle: const Text("Date: 2025-02-02 | Time: 10:00 AM",
+                          style: TextStyle(
+                              color: Colors.grey, fontSize: 12)),
+                      trailing: const Text("\$250.00",
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold)),
+                    ),
+                  );
+                },
               ),
-             // Divider(),
-            ],
-          );
-        },
-      ),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

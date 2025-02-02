@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:spend_wise/screens/homepage.dart';
 
 void main() {
@@ -13,7 +14,7 @@ class SpendWise extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'Roboto',
+        textTheme: GoogleFonts.poppinsTextTheme()
       ),
       title: 'Spend Wise',
       home: const HomePage(),
