@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:spend_wise/screens/drawer.dart';
 import 'package:spend_wise/screens/showModalBottomSheet.dart';
 import 'package:spend_wise/screens/signUpScreen.dart';
@@ -11,13 +12,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  DateTime selectedDate = DateTime.now();
+
   void _bottomSheet() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-            top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       backgroundColor: Colors.white,
       builder: (context) {
@@ -48,30 +51,45 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _drawer() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => CustomDrawer(
-          email: "",
-          username: "",
-          profilePictureUrl: "",
-          onLogIn: _login,
-          isBackupEnabled: false,
-          onBackupToggle: (bool value) {},
-          onLogout: () {},
-          onExit: () {},
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: CustomDrawer(
+        username: "John Doe",
+        email: "johndoe@gmail.com",
+        profilePictureUrl: "",
+        onLogIn: _login,
+        isBackupEnabled: false,
+        onBackupToggle: (bool value) {},
+        onLogout: () {},
+        onExit: () {},
+      ),
       appBar: AppBar(
         title:
             const Text("Welcome Back, Annie", style: TextStyle(fontSize: 18)),
         actions: [
+          GestureDetector(
+  onTap: () async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (pickedDate != null && pickedDate != DateTime.now()) {
+      setState(() {
+        selectedDate = pickedDate;
+      });
+    }
+  },
+  child: Text(
+    DateFormat('dd MMM').format(selectedDate),
+    style: const TextStyle(fontSize: 18, color: Colors.black),
+  ),
+),
+
+          const SizedBox(width: 10),
           IconButton(
             icon: const Icon(Icons.add_circle_sharp, size: 20),
             onPressed: _bottomSheet,
@@ -90,24 +108,20 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.all(12),
               width: double.infinity,
               decoration: BoxDecoration(
-                color: const Color.fromRGBO(9, 18, 44, 1.0),
+                color: const Color.fromRGBO(39, 68, 93, 1.0),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  const Row(
                     children: [
-                      GestureDetector(
-                        onTap: _drawer,
-                        child: const CircleAvatar(
-                          radius: 15,
-                          backgroundImage:
-                              AssetImage("assets/images/annie.jpg"),
-                        ),
+                      CircleAvatar(
+                        radius: 15,
+                        backgroundImage: AssetImage("assets/images/annie.jpg"),
                       ),
-                      const Spacer(),
-                      const Column(
+                      Spacer(),
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text("Balance",
@@ -240,8 +254,8 @@ class _HomePageState extends State<HomePage> {
                             borderRadius: BorderRadius.circular(8),
                             value: 0.7,
                             backgroundColor: Colors.white,
-                            valueColor:
-                                const AlwaysStoppedAnimation<Color>(Colors.black),
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                                Colors.black),
                           ),
                         ),
                       ],
@@ -278,8 +292,8 @@ class _HomePageState extends State<HomePage> {
                             borderRadius: BorderRadius.circular(8),
                             value: 0.5,
                             backgroundColor: Colors.white,
-                            valueColor:
-                               const  AlwaysStoppedAnimation<Color>(Colors.black),
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                                Colors.black),
                           ),
                         ),
                       ],
@@ -294,7 +308,7 @@ class _HomePageState extends State<HomePage> {
               "Transactions",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
-           const SizedBox(height: 15),
+            const SizedBox(height: 15),
             Expanded(
               child: ListView.builder(
                 itemCount: 10, // Number of transactions to display
@@ -313,11 +327,12 @@ class _HomePageState extends State<HomePage> {
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 14)),
                       subtitle: const Text("Date: 2025-02-02 | Time: 10:00 AM",
-                          style: TextStyle(
-                              color: Colors.grey, fontSize: 12)),
-                      trailing: const Text("\$250.00",
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.bold)),
+                          style: TextStyle(color: Colors.grey, fontSize: 12)),
+                      trailing: const Text(
+                        "\$250.00",
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
                     ),
                   );
                 },
@@ -325,6 +340,24 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0,
+        onTap: (index) {},
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_balance_wallet),
+            label: "Wallet",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: "Calander",
+          ),
+        ],
       ),
     );
   }

@@ -21,3 +21,4 @@ class SpendWise extends StatelessWidget {
     );
   }
 }
+
