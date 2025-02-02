@@ -8,24 +8,47 @@ class Showmodalbottomsheet extends StatefulWidget {
 }
 
 class _ShowmodalbottomsheetState extends State<Showmodalbottomsheet> {
-  Widget customSizeButton(
-      String btnTxt, Color btnColor, Color txtColor, double width, double height) {
+  List<String> finance = ['Cash', 'Card', 'Bank Transfer'];
+  List<String> shopping = ['Shopping', 'Groceries', 'Electronics'];
+
+  String _amount = "0.00";
+
+  void _updateAmount(String value) {
+    setState(() {
+      if (value == "Del") {
+        _amount = _amount.length > 1
+            ? _amount.substring(0, _amount.length - 1)
+            : "0.00";
+      } else if (value == "Cal") {
+        _amount = "0.00";
+      } else {
+        if (_amount == "0.00" || _amount == "0") {
+          _amount = value; // Replace initial amount with new value
+        } else {
+          _amount += value; // Append new value
+        }
+      }
+    });
+  }
+
+  Widget customSizeButton(String btnTxt, Color btnColor, Color txtColor,
+      double width, double height) {
     return GestureDetector(
       onTap: () {
-        // Handle button press here
+        _updateAmount(btnTxt);
       },
       child: Container(
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: btnColor.withOpacity(0.2), // Increased opacity for visibility
+          color: btnColor.withOpacity(0.2),
           borderRadius: BorderRadius.circular(15),
         ),
         alignment: Alignment.center,
         child: Text(
           btnTxt,
           style: TextStyle(
-            fontSize: btnTxt.length > 1 ? 20 : 35, // Adjust text size for longer texts
+            fontSize: btnTxt.length > 1 ? 20 : 35,
             color: txtColor,
           ),
         ),
@@ -46,19 +69,41 @@ class _ShowmodalbottomsheetState extends State<Showmodalbottomsheet> {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(15),
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        minimumSize: const Size(0, 50),
-                        backgroundColor: const Color.fromRGBO(182, 255, 250, 1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: const Color.fromRGBO(182, 255, 250, 1),
+                        borderRadius: BorderRadius.circular(30),
                       ),
-                      child: const Text(
-                        'Cash',
-                        style: TextStyle(fontSize: 20, color: Colors.black),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: 'Cash',
+                            items: finance.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Center(
+                                  child: Text(
+                                    value,
+                                    style: const TextStyle(
+                                        fontSize: 20, color: Colors.black),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {},
+                            icon: const Icon(Icons.keyboard_arrow_down,
+                                color: Colors.black),
+                            iconSize: 28,
+                            isExpanded: true,
+                            alignment: Alignment.center,
+                            style: const TextStyle(
+                                fontSize: 20, color: Colors.black),
+                            dropdownColor:
+                                const Color.fromRGBO(182, 255, 250, 1),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -66,19 +111,41 @@ class _ShowmodalbottomsheetState extends State<Showmodalbottomsheet> {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(15),
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        minimumSize: const Size(0, 50),
-                        backgroundColor: const Color.fromRGBO(186, 216, 182, 1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: const Color.fromRGBO(186, 216, 182, 1),
+                        borderRadius: BorderRadius.circular(30),
                       ),
-                      child: const Text(
-                        'Shopping',
-                        style: TextStyle(fontSize: 20, color: Colors.black),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: 'Shopping',
+                            items: shopping.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Center(
+                                  child: Text(
+                                    value,
+                                    style: const TextStyle(
+                                        fontSize: 20, color: Colors.black),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {},
+                            icon: const Icon(Icons.keyboard_arrow_down,
+                                color: Colors.black),
+                            iconSize: 28,
+                            isExpanded: true,
+                            alignment: Alignment.center,
+                            style: const TextStyle(
+                                fontSize: 20, color: Colors.black),
+                            dropdownColor:
+                                const Color.fromRGBO(186, 216, 182, 1),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -86,21 +153,24 @@ class _ShowmodalbottomsheetState extends State<Showmodalbottomsheet> {
               ],
             ),
             const SizedBox(height: 10),
-            const Column(
+            Column(
               children: [
-                Text('Expense',
-                    style: TextStyle(fontSize: 18, color: Colors.black),),
-                SizedBox(height: 10),
+                
+                const Text(
+                  'Expense',
+                  style: TextStyle(fontSize: 18, color: Colors.black),
+                ),
+                const SizedBox(height: 10),
                 Text(
-                  '\$25.00',
-                  style: TextStyle(
+                  '\$$_amount',
+                  style: const TextStyle(
                       fontSize: 50,
                       fontWeight: FontWeight.bold,
                       color: Colors.black),
                 ),
-                SizedBox(height: 10),
-                Text('Add comment...',
-                    style: TextStyle(fontSize: 16, color: Colors.black)),
+                const SizedBox(height: 10),
+                const Text('Add comment...',
+                    style: TextStyle(fontSize: 13, color: Colors.black)),
               ],
             ),
             const SizedBox(height: 10),
@@ -108,51 +178,72 @@ class _ShowmodalbottomsheetState extends State<Showmodalbottomsheet> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Column(
-                  children: [
-                    for (var btn in ['1', '4', '7', '\$'])
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: customSizeButton(
-                            btn, const Color.fromRGBO(35, 72, 106, 1), Colors.black, 50, 50),
-                      ),
-                  ],
+                  children: ['1', '4', '7', '\$']
+                      .map((btn) => Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: customSizeButton(
+                                btn,
+                                const Color.fromRGBO(35, 72, 106, 1),
+                                Colors.black,
+                                50,
+                                50),
+                          ))
+                      .toList(),
                 ),
                 Column(
-                  children: [
-                    for (var btn in ['2', '5', '8', '0'])
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: customSizeButton(
-                            btn, const Color.fromRGBO(35, 72, 106, 1), Colors.black, 50, 50),
-                      ),
-                  ],
+                  children: ['2', '5', '8', '0']
+                      .map((btn) => Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: customSizeButton(
+                                btn,
+                                const Color.fromRGBO(35, 72, 106, 1),
+                                Colors.black,
+                                50,
+                                50),
+                          ))
+                      .toList(),
                 ),
                 Column(
-                  children: [
-                    for (var btn in ['3', '6', '9', ','])
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: customSizeButton(
-                            btn, const Color.fromRGBO(35, 72, 106, 1), Colors.black, 50, 50),
-                      ),
-                  ],
+                  children: ['3', '6', '9', ',']
+                      .map((btn) => Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: customSizeButton(
+                                btn,
+                                const Color.fromRGBO(35, 72, 106, 1),
+                                Colors.black,
+                                50,
+                                50),
+                          ))
+                      .toList(),
                 ),
                 Column(
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(5.0),
                       child: customSizeButton(
-                          "Cal", const Color.fromRGBO(35, 72, 106, 1), Colors.black, 50, 50),
+                          "Cal",
+                          const Color.fromRGBO(35, 72, 106, 1),
+                          Colors.black,
+                          50,
+                          50),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(5.0),
                       child: customSizeButton(
-                          "Del", const Color.fromRGBO(35, 72, 106, 1), Colors.black, 50, 50),
+                          "Del",
+                          const Color.fromRGBO(35, 72, 106, 1),
+                          Colors.black,
+                          50,
+                          50),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(5.0),
                       child: customSizeButton(
-                          "✔", const Color.fromRGBO(23, 59, 69, 1), Colors.black, 50, 100),
+                          "✔",
+                          const Color.fromRGBO(23, 59, 69, 1),
+                          Colors.black,
+                          50,
+                          100),
                     ),
                   ],
                 ),
