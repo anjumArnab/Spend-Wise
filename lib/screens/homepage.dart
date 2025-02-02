@@ -14,23 +14,23 @@ class _HomePageState extends State<HomePage> {
   void _bottomSheet() {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true, // Allows height customization
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-            top: Radius.circular(20)), // Rounded top corners
+            top: Radius.circular(20)),
       ),
-      backgroundColor: Colors.white, // Background color of the modal
+      backgroundColor: Colors.white,
       builder: (context) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.9, // Opens at 50% of screen height
-          minChildSize: 0.3, // Minimum height (30% of screen)
-          maxChildSize: 0.9, // Maximum height (90% of screen)
+          initialChildSize: 0.9,
+          minChildSize: 0.3,
+          maxChildSize: 0.9,
           expand: false,
           builder: (context, scrollController) {
             return Container(
               padding: const EdgeInsets.all(16),
               child: SingleChildScrollView(
-                controller: scrollController, // Enables scrolling
+                controller: scrollController,
                 child: const Showmodalbottomsheet(),
               ),
             );
@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
   void _login() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => SignUpScreen(),
+        builder: (context) => const SignUpScreen(),
       ),
     );
   }
