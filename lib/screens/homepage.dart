@@ -12,7 +12,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   DateTime selectedDate = DateTime.now();
 
   void _bottomSheet() {
@@ -69,26 +68,25 @@ class _HomePageState extends State<HomePage> {
             const Text("Welcome Back, Annie", style: TextStyle(fontSize: 18)),
         actions: [
           GestureDetector(
-  onTap: () async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
+            onTap: () async {
+              DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(2000),
+                lastDate: DateTime(2100),
+              );
 
-    if (pickedDate != null && pickedDate != DateTime.now()) {
-      setState(() {
-        selectedDate = pickedDate;
-      });
-    }
-  },
-  child: Text(
-    DateFormat('dd MMM').format(selectedDate),
-    style: const TextStyle(fontSize: 18, color: Colors.black),
-  ),
-),
-
+              if (pickedDate != null && pickedDate != DateTime.now()) {
+                setState(() {
+                  selectedDate = pickedDate;
+                });
+              }
+            },
+            child: Text(
+              DateFormat('dd MMM').format(selectedDate),
+              style: const TextStyle(fontSize: 18, color: Colors.black),
+            ),
+          ),
           const SizedBox(width: 10),
           IconButton(
             icon: const Icon(Icons.add_circle_sharp, size: 20),
@@ -340,24 +338,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        onTap: (index) {},
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance_wallet),
-            label: "Wallet",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: "Calander",
-          ),
-        ],
       ),
     );
   }
