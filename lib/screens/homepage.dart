@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:spend_wise/screens/drawer.dart';
-import 'package:spend_wise/screens/showModalBottomSheet.dart';
-import 'package:spend_wise/screens/signUpScreen.dart';
+import 'package:spend_wise/screens/show_modal_bottom_sheet.dart';
+import 'package:spend_wise/screens/sign_up_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -50,6 +52,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _signOut(){
+    FirebaseAuth.instance.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +66,7 @@ class _HomePageState extends State<HomePage> {
         onLogIn: _login,
         isBackupEnabled: false,
         onBackupToggle: (bool value) {},
-        onLogout: () {},
+        onLogout: _signOut,
         onExit: () {},
       ),
       appBar: AppBar(

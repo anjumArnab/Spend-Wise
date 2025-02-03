@@ -1,4 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:spend_wise/screens/homepage.dart';
+import 'package:spend_wise/services/firbase_auth_methods.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -8,7 +12,6 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   bool _isSignUp = true;
@@ -18,7 +21,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+
+  void signUpUser() async {
+    FirebaseAuthMethods(FirebaseAuth.instance).signUpWithEmailPassword(
+      _emailController.text,
+      _passwordController.text,
+      context,
+    );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const HomePage(),
+      ),
+    );
+  }
+
+  void logIn() {
+    FirebaseAuthMethods(FirebaseAuth.instance).logInWithEmailPassword(
+        _emailController.text, _passwordController.text, context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const HomePage(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +81,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         });
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _isSignUp ? Color.fromRGBO(23, 59, 69, 1) : Colors.white,
+                        backgroundColor: _isSignUp
+                            ? const Color.fromRGBO(23, 59, 69, 1)
+                            : Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -61,7 +92,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         "Sign Up",
                         style: _isSignUp
                             ? const TextStyle(color: Colors.white)
-                            : TextStyle(color: Colors.black),
+                            : const TextStyle(color: Colors.black),
                       ),
                     ),
                   ),
@@ -81,7 +112,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         foregroundColor:
                             _isSignUp ? Colors.black54 : Colors.white,
-                        backgroundColor: _isSignUp ? Colors.white : Color.fromRGBO(23, 59, 69, 1),
+                        backgroundColor: _isSignUp
+                            ? Colors.white
+                            : const Color.fromRGBO(23, 59, 69, 1),
                       ),
                       child: Text(
                         "Log In",
@@ -196,9 +229,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               width: 150,
               height: 50,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: _isSignUp ? signUpUser : logIn,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromRGBO(23, 59, 69, 1), // Neon Green
+                  backgroundColor: const Color.fromRGBO(23, 59, 69, 1), // Neon Green
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
