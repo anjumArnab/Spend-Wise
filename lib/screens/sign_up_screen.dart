@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:spend_wise/screens/homepage.dart';
 import 'package:spend_wise/services/firbase_auth_methods.dart';
