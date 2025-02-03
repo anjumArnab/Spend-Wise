@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:spend_wise/screens/homepage.dart';
 import 'package:spend_wise/services/firbase_auth_methods.dart';
 
@@ -11,7 +12,9 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  
+
+  DateTime selectedDate = DateTime.now();
+
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   bool _isSignUp = true;
@@ -23,6 +26,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _dobController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  }
+
+  @override
+  void dispose() {
+    _dobController.dispose();
+    super.dispose();
+  }
 
   void signUpUser() async {
     FirebaseAuthMethods(FirebaseAuth.instance).signUpWithEmailPassword(
@@ -46,6 +61,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
       MaterialPageRoute(
         builder: (context) => const HomePage(),
       ),
+    );
+  }
+
+  void phoneSignIn(){
+    FirebaseAuthMethods(FirebaseAuth.instance).signInWithPhone(
+      _emailController.text,
+      context,
     );
   }
 
@@ -97,6 +119,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Container(
                     height: 50,
@@ -161,12 +184,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
               TextFormField(
                 controller: _dobController,
                 decoration: const InputDecoration(
-                  labelText: "Birth of Date",
+                  labelText: "Birth Date",
                   suffixIcon: Icon(Icons.calendar_today),
                   border: UnderlineInputBorder(),
                 ),
-                keyboardType: TextInputType.datetime,
+                readOnly: true, // Prevent manual editing
+                onTap: () async {
+                  DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime
+                        .now(), // Can be adjusted if you want to start from a different date
+                    firstDate: DateTime(1900), // Earliest allowed date
+                    lastDate: DateTime.now(), // Latest allowed date
+                  );
+
+                  if (pickedDate != null) {
+                    String formattedDate =
+                        DateFormat('yyyy-MM-dd').format(pickedDate);
+                    setState(() {
+                      _dobController.text = formattedDate;
+                    });
+                  }
+                },
               ),
+
               const SizedBox(height: 10),
             ],
             // Email Field
@@ -231,7 +272,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               child: ElevatedButton(
                 onPressed: _isSignUp ? signUpUser : logIn,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromRGBO(23, 59, 69, 1), // Neon Green
+                  backgroundColor:
+                      const Color.fromRGBO(23, 59, 69, 1), // Neon Green
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),

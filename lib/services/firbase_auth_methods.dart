@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:spend_wise/utils/show_otp_dialpg.dart';
 import 'package:spend_wise/utils/show_snack_bar.dart';
 
 
@@ -55,4 +56,40 @@ class FirebaseAuthMethods {
       showSnackbar(context, e.message!);
     }
   }
+
+  // Phone Sign In
+  Future<void> signInWithPhone(
+      String phoneNumber,
+      BuildContext context,
+      ) async {
+    try {
+      TextEditingController codeController = TextEditingController();
+      await _auth.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          await _auth.signInWithCredential(credential);
+          showSnackbar(context, 'Phone number verified.');
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          showSnackbar(context, e.message!);
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          showOTPDialog(context, codeController, () async {
+            PhoneAuthCredential credential = PhoneAuthProvider.credential(
+              verificationId: verificationId,
+              smsCode: codeController.text.trim(),
+            );
+            await _auth.signInWithCredential(credential);
+            Navigator.pop(context);
+          });
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          showSnackbar(context, 'Time out.');
+        },
+      );
+    } on FirebaseAuthException catch (e) {
+      showSnackbar(context, e.message!);
+    }
+  }
+
 }
