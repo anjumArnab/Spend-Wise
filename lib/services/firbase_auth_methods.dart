@@ -3,24 +3,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:spend_wise/utils/show_otp_dialpg.dart';
 import 'package:spend_wise/utils/show_snack_bar.dart';
 
-
 class FirebaseAuthMethods {
   final FirebaseAuth _auth;
   FirebaseAuthMethods(this._auth);
 
   // Email and Password Sign Up
   Future<void> signUpWithEmailPassword(
-      String email, 
-      String password,
-      BuildContext context,
-      ) async {
+    String email,
+    String password,
+    BuildContext context,
+  ) async {
     try {
       await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
       await verifyEmail(context);
-    }  on FirebaseAuthException catch (e){
+    } on FirebaseAuthException catch (e) {
       showSnackbar(context, e.message!);
     }
   }
@@ -35,33 +34,37 @@ class FirebaseAuthMethods {
     }
   }
 
-  // Email and Password Log In
-  Future<void> logInWithEmailPassword(
-      String email, 
-      String password,
-      BuildContext context,
-      ) async {
+  // Email and Password Log In (now returns a boolean)
+  Future<bool> logInWithEmailPassword(
+    String email,
+    String password,
+    BuildContext context,
+  ) async {
     try {
-      await _auth.signInWithEmailAndPassword(
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      if(_auth.currentUser!.emailVerified){
-        await verifyEmail(context);
+
+      // Check if the user is logged in and email is verified
+      if (userCredential.user != null && userCredential.user!.emailVerified) {
         showSnackbar(context, 'Logged in successfully.');
+        return true;
       } else {
         showSnackbar(context, 'Please verify your email.');
+        return false;
       }
     } on FirebaseAuthException catch (e) {
       showSnackbar(context, e.message!);
+      return false;
     }
   }
 
-  // Phone Sign In
+  // Phone Sign In remains unchanged
   Future<void> signInWithPhone(
-      String phoneNumber,
-      BuildContext context,
-      ) async {
+    String phoneNumber,
+    BuildContext context,
+  ) async {
     try {
       TextEditingController codeController = TextEditingController();
       await _auth.verifyPhoneNumber(
@@ -91,5 +94,4 @@ class FirebaseAuthMethods {
       showSnackbar(context, e.message!);
     }
   }
-
 }

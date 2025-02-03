@@ -1,8 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:spend_wise/screens/homepage.dart';
 import 'package:spend_wise/services/firbase_auth_methods.dart';
+import 'package:spend_wise/utils/show_snack_bar.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -12,7 +13,6 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-
   DateTime selectedDate = DateTime.now();
 
   bool _isPasswordVisible = false;
@@ -40,31 +40,51 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void signUpUser() async {
-    FirebaseAuthMethods(FirebaseAuth.instance).signUpWithEmailPassword(
+    // Validate that email and password are not empty.
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      showSnackbar(context, "Please enter both email and password");
+      return;
+    }
+
+    // Await the sign-up process.
+    await FirebaseAuthMethods(FirebaseAuth.instance).signUpWithEmailPassword(
       _emailController.text,
       _passwordController.text,
       context,
     );
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const HomePage(),
-      ),
-    );
+
+    // Only navigate if the user was successfully created.
+    if (FirebaseAuth.instance.currentUser != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const HomePage(),
+        ),
+      );
+    }
   }
 
-  void logIn() {
-    FirebaseAuthMethods(FirebaseAuth.instance).logInWithEmailPassword(
-        _emailController.text, _passwordController.text, context);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const HomePage(),
-      ),
-    );
+  void logIn() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      showSnackbar(context, "Please enter both email and password");
+      return;
+    }
+
+    // Await the login process and get a success flag.
+    bool isLoggedIn = await FirebaseAuthMethods(FirebaseAuth.instance)
+        .logInWithEmailPassword(
+            _emailController.text, _passwordController.text, context);
+
+    // Navigate only if login was successful.
+    if (isLoggedIn) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    }
   }
 
-  void phoneSignIn(){
+  void phoneSignIn() {
     FirebaseAuthMethods(FirebaseAuth.instance).signInWithPhone(
       _emailController.text,
       context,
