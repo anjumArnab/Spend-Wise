@@ -96,7 +96,7 @@ class FirebaseAuthMethods {
   }
 
   // Sign Out
- Future<void> signOut(BuildContext context) async {
+  Future<void> signOut(BuildContext context) async {
     try {
       await _auth.signOut();
       showSnackbar(context, 'Logged out successfully.');
@@ -106,7 +106,7 @@ class FirebaseAuthMethods {
   }
 
   // Delete Account
-Future<void> deleteAccount(BuildContext context) async {
+  Future<void> deleteAccount(BuildContext context) async {
     try {
       await _auth.currentUser!.delete();
       showSnackbar(context, 'Account deleted successfully.');
@@ -114,5 +114,4 @@ Future<void> deleteAccount(BuildContext context) async {
       showSnackbar(context, e.message!);
     }
   }
-
 }
