@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:spend_wise/screens/homepage.dart';
 import 'package:spend_wise/services/firbase_auth_methods.dart';
 import 'package:spend_wise/utils/show_snack_bar.dart';
+import 'package:spend_wise/utils/text_field.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -13,8 +14,6 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  DateTime selectedDate = DateTime.now();
-
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   bool _isSignUp = true;
@@ -24,8 +23,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   @override
   void initState() {
@@ -40,26 +38,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void signUpUser() async {
-    // Validate that email and password are not empty.
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
       showSnackbar(context, "Please enter both email and password");
       return;
     }
 
-    // Await the sign-up process.
     await FirebaseAuthMethods(FirebaseAuth.instance).signUpWithEmailPassword(
       _emailController.text,
       _passwordController.text,
       context,
     );
 
-    // Only navigate if the user was successfully created.
     if (FirebaseAuth.instance.currentUser != null) {
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => const HomePage(),
-        ),
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
     }
   }
@@ -70,26 +63,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
       return;
     }
 
-    // Await the login process and get a success flag.
     bool isLoggedIn = await FirebaseAuthMethods(FirebaseAuth.instance)
         .logInWithEmailPassword(
             _emailController.text, _passwordController.text, context);
 
-    // Navigate only if login was successful.
     if (isLoggedIn) {
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const HomePage()),
       );
     }
   }
 
-  void phoneSignIn() {
-    FirebaseAuthMethods(FirebaseAuth.instance).signInWithPhone(
-      _emailController.text,
-      context,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,214 +85,108 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text(
-              "Get Started Now",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
+            const Text("Get Started Now", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
             const SizedBox(height: 5),
-            const Text(
-              "Create an account or log in to explore our app",
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-            ),
+            const Text("Create an account or log in to explore our app", style: TextStyle(fontSize: 14, color: Colors.grey)),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                  child: Container(
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _isSignUp = true;
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: _isSignUp
-                            ? const Color.fromRGBO(23, 59, 69, 1)
-                            : Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      child: Text(
-                        "Sign Up",
-                        style: _isSignUp
-                            ? const TextStyle(color: Colors.white)
-                            : const TextStyle(color: Colors.black),
-                      ),
-                    ),
-                  ),
-                ),
+                Expanded(child: buildToggleButton("Sign Up", true)),
                 const SizedBox(width: 10),
-                Expanded(
-                  child: Container(
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _isSignUp = false;
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        foregroundColor:
-                            _isSignUp ? Colors.black54 : Colors.white,
-                        backgroundColor: _isSignUp
-                            ? Colors.white
-                            : const Color.fromRGBO(23, 59, 69, 1),
-                      ),
-                      child: Text(
-                        "Log In",
-                        style: _isSignUp
-                            ? const TextStyle(color: Colors.black)
-                            : const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ),
+                Expanded(child: buildToggleButton("Log In", false)),
               ],
             ),
-
             const SizedBox(height: 20),
-
-            // Conditionally Render Fields Based on the Sign-Up / Log-In State
             if (_isSignUp) ...[
-              // First Name & Last Name (only for Sign Up)
               Row(
                 children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _firstNameController,
-                      decoration: const InputDecoration(
-                        labelText: "First Name",
-                        border: UnderlineInputBorder(),
-                      ),
-                    ),
-                  ),
+                  Expanded(child: buildTextField(controller: _firstNameController, labelText: "First Name")),
                   const SizedBox(width: 10),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _lastNameController,
-                      decoration: const InputDecoration(
-                        labelText: "Last Name",
-                        border: UnderlineInputBorder(),
-                      ),
-                    ),
-                  ),
+                  Expanded(child: buildTextField(controller: _lastNameController, labelText: "Last Name")),
                 ],
               ),
               const SizedBox(height: 10),
-              // Date of Birth Field (only for Sign Up)
-              TextFormField(
+              buildTextField(
                 controller: _dobController,
-                decoration: const InputDecoration(
-                  labelText: "Birth Date",
-                  suffixIcon: Icon(Icons.calendar_today),
-                  border: UnderlineInputBorder(),
-                ),
-                readOnly: true, // Prevent manual editing
+                labelText: "Birth Date",
+                readOnly: true,
+                suffixIcon: const Icon(Icons.calendar_today),
                 onTap: () async {
                   DateTime? pickedDate = await showDatePicker(
                     context: context,
-                    initialDate: DateTime
-                        .now(), // Can be adjusted if you want to start from a different date
-                    firstDate: DateTime(1900), // Earliest allowed date
-                    lastDate: DateTime.now(), // Latest allowed date
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime.now(),
                   );
 
                   if (pickedDate != null) {
-                    String formattedDate =
-                        DateFormat('yyyy-MM-dd').format(pickedDate);
                     setState(() {
-                      _dobController.text = formattedDate;
+                      _dobController.text = DateFormat('yyyy-MM-dd').format(pickedDate);
                     });
                   }
                 },
               ),
-
               const SizedBox(height: 10),
             ],
-            // Email Field
-            TextFormField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: "Email",
-                border: UnderlineInputBorder(),
-              ),
-              keyboardType: TextInputType.emailAddress,
-            ),
+            buildTextField(controller: _emailController, labelText: "Email", keyboardType: TextInputType.emailAddress),
             const SizedBox(height: 10),
-            // Password Field
-            TextFormField(
+            buildTextField(
               controller: _passwordController,
+              labelText: "Password",
               obscureText: !_isPasswordVisible,
-              decoration: InputDecoration(
-                labelText: "Password",
-                border: const UnderlineInputBorder(),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isPasswordVisible
-                        ? Icons.visibility
-                        : Icons.visibility_off,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
-                  },
-                ),
-              ),
+              suffixIcon: buildVisibilityIcon(_isPasswordVisible, () {
+                setState(() {
+                  _isPasswordVisible = !_isPasswordVisible;
+                });
+              }),
             ),
             const SizedBox(height: 10),
-            // Confirm Password Field (only for Sign Up)
             if (_isSignUp)
-              TextFormField(
+              buildTextField(
                 controller: _confirmPasswordController,
+                labelText: "Confirm Password",
                 obscureText: !_isConfirmPasswordVisible,
-                decoration: InputDecoration(
-                  labelText: "Confirm Password",
-                  border: const UnderlineInputBorder(),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isConfirmPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                      });
-                    },
-                  ),
-                ),
+                suffixIcon: buildVisibilityIcon(_isConfirmPasswordVisible, () {
+                  setState(() {
+                    _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                  });
+                }),
               ),
             const SizedBox(height: 20),
-            // Sign Up / Log In Button
             SizedBox(
               width: 150,
               height: 50,
               child: ElevatedButton(
                 onPressed: _isSignUp ? signUpUser : logIn,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      const Color.fromRGBO(23, 59, 69, 1), // Neon Green
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+                  backgroundColor: const Color.fromRGBO(23, 59, 69, 1),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
-                child: Text(
-                  _isSignUp ? "Sign Up" : "Log In",
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
-                ),
+                child: Text(_isSignUp ? "Sign Up" : "Log In", style: const TextStyle(color: Colors.white, fontSize: 16)),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildVisibilityIcon(bool isVisible, VoidCallback onPressed) {
+    return IconButton(
+      icon: Icon(isVisible ? Icons.visibility : Icons.visibility_off),
+      onPressed: onPressed,
+    );
+  }
+
+  Widget buildToggleButton(String text, bool isSignUp) {
+    return ElevatedButton(
+      onPressed: () => setState(() => _isSignUp = isSignUp),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: _isSignUp == isSignUp ? const Color.fromRGBO(23, 59, 69, 1) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      ),
+      child: Text(text, style: TextStyle(color: _isSignUp == isSignUp ? Colors.white : Colors.black)),
     );
   }
 }
