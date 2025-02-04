@@ -7,7 +7,7 @@ class NotificationService{
   //initilize
   Future initilize() async {
     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    AndroidInitializationSettings androidInitializationSettings = AndroidInitializationSettings('app_icon');
+    AndroidInitializationSettings androidInitializationSettings = const AndroidInitializationSettings('app_icon');
 
     final InitializationSettings initializationSettings = InitializationSettings(
       android: androidInitializationSettings

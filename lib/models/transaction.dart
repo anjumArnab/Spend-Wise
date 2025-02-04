@@ -1,12 +1,12 @@
 class Transaction {
-  final DateTime date;
   final String category;
+  final DateTime dateAndTime;
   final String description;
   final double amount;
 
   Transaction({
-    required this.date,
     required this.category,
+    required this.dateAndTime,
     required this.description,
     required this.amount,
   });

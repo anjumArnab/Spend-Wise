@@ -1,5 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:spend_wise/screens/drawer.dart';
 import 'package:spend_wise/screens/show_modal_bottom_sheet.dart';
@@ -13,8 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-  
   DateTime selectedDate = DateTime.now();
 
   void _bottomSheet() {
@@ -53,7 +51,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _signOut(){
+  void _signOut() {
     FirebaseAuth.instance.signOut();
   }
 
@@ -328,11 +326,15 @@ class _HomePageState extends State<HomePage> {
                     child: ListTile(
                       leading: const Icon(Icons.credit_card,
                           color: Colors.blue, size: 20), // Smaller icon
-                      title: Text("Training Session #$index",
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 14)),
-                      subtitle: const Text("Date: 2025-02-02 | Time: 10:00 AM",
-                          style: TextStyle(color: Colors.grey, fontSize: 12)),
+                      title: Text(
+                        "Credit card payment $index",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                      subtitle: const Text(
+                        "Date: 2025-02-02 | Time: 10:00 AM",
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
                       trailing: const Text(
                         "\$250.00",
                         style: TextStyle(
