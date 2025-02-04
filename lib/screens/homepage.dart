@@ -217,17 +217,19 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("My Budgets",
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14),),
-                        const SizedBox(width: 250),
-                        IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.add_circle_sharp, size: 20),),
-
+                const Text(
+                  "My Budgets",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                const SizedBox(width: 250),
                 IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.arrow_forward_ios_sharp, size: 20),),
+                  onPressed: () {},
+                  icon: const Icon(Icons.add_circle_sharp, size: 20),
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.arrow_forward_ios_sharp, size: 20),
+                ),
               ],
             ),
             Row(
