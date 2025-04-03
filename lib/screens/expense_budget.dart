@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ExpenseBudget extends StatefulWidget {
-  const ExpenseBudget({super.key});
+  final String title;
+  ExpenseBudget({required this.title, super.key});
 
   @override
   State<ExpenseBudget> createState() => _ExpenseBudgetState();
@@ -57,7 +58,7 @@ class _ExpenseBudgetState extends State<ExpenseBudget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Expense Budget"),
+        title: Text(widget.title),
       ),
       body: Padding(
         padding: const EdgeInsets.all(12),

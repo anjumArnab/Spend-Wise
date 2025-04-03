@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:spend_wise/screens/drawer.dart';
 import 'package:spend_wise/screens/expense_budget.dart';
 
@@ -11,12 +10,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  DateTime selectedDate = DateTime.now();
 
-  void _navToExpenseBudget(BuildContext context){
+  void _navToExpenseBudget(BuildContext context, String title){
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ExpenseBudget()),
+      MaterialPageRoute(builder: (context) => ExpenseBudget(title:title)),
     );
   }
 
@@ -37,30 +35,10 @@ class _HomePageState extends State<HomePage> {
         title:
             const Text("Welcome Back, Annie", style: TextStyle(fontSize: 18)),
         actions: [
-          GestureDetector(
-            onTap: () async {
-              DateTime? pickedDate = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-              );
-
-              if (pickedDate != null && pickedDate != DateTime.now()) {
-                setState(() {
-                  selectedDate = pickedDate;
-                });
-              }
-            },
-            child: Text(
-              DateFormat('dd MMM').format(selectedDate),
-              style: const TextStyle(fontSize: 18, color: Colors.black),
-            ),
-          ),
-          const SizedBox(width: 10),
+         
           IconButton(
             icon: const Icon(Icons.add_circle_sharp, size: 20),
-            onPressed: () => _navToExpenseBudget(context),
+            onPressed: () => _navToExpenseBudget(context, 'Expense'),
           ),
           IconButton(
             icon: const Icon(Icons.notifications_none_rounded, size: 20),
@@ -105,7 +83,7 @@ class _HomePageState extends State<HomePage> {
                     child: LinearProgressIndicator(
                       borderRadius: BorderRadius.circular(8),
                       value: 0.7,
-                      backgroundColor: Colors.white,
+                      
                       valueColor: const AlwaysStoppedAnimation<Color>(
                           Color.fromRGBO(33, 33, 33, 1.0)),
                     ),
@@ -184,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(width: 250),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () => _navToExpenseBudget(context, 'Budget'),
                   icon: const Icon(Icons.add_circle_sharp, size: 20),
                 ),
                 IconButton(
@@ -224,7 +202,7 @@ class _HomePageState extends State<HomePage> {
                           child: LinearProgressIndicator(
                             borderRadius: BorderRadius.circular(8),
                             value: 0.7,
-                            backgroundColor: Colors.white,
+                            
                             valueColor: const AlwaysStoppedAnimation<Color>(
                                 Colors.black),
                           ),
@@ -262,7 +240,7 @@ class _HomePageState extends State<HomePage> {
                           child: LinearProgressIndicator(
                             borderRadius: BorderRadius.circular(8),
                             value: 0.5,
-                            backgroundColor: Colors.white,
+                            
                             valueColor: const AlwaysStoppedAnimation<Color>(
                                 Colors.black),
                           ),
