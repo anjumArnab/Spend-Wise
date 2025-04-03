@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
-import 'package:spend_wise/screens/homepage.dart';
-import 'package:spend_wise/services/firbase_auth_methods.dart';
-import 'package:spend_wise/utils/show_snack_bar.dart';
 import 'package:spend_wise/utils/text_field.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -36,46 +32,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _dobController.dispose();
     super.dispose();
   }
-
-  void signUpUser() async {
-    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-      showSnackbar(context, "Please enter both email and password");
-      return;
-    }
-
-    await FirebaseAuthMethods(FirebaseAuth.instance).signUpWithEmailPassword(
-      _emailController.text,
-      _passwordController.text,
-      context,
-    );
-
-    if (FirebaseAuth.instance.currentUser != null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
-    }
-  }
-
-  void logIn() async {
-    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-      showSnackbar(context, "Please enter both email and password");
-      return;
-    }
-
-    bool isLoggedIn = await FirebaseAuthMethods(FirebaseAuth.instance)
-        .logInWithEmailPassword(
-            _emailController.text, _passwordController.text, context);
-
-    if (isLoggedIn) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
-    }
-  }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -158,7 +114,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               width: 150,
               height: 50,
               child: ElevatedButton(
-                onPressed: _isSignUp ? signUpUser : logIn,
+                onPressed: (){},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(23, 59, 69, 1),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
