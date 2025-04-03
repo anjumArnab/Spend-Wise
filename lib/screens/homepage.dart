@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:spend_wise/screens/drawer.dart';
-import 'package:spend_wise/screens/show_modal_bottom_sheet.dart';
-import 'package:spend_wise/screens/sign_up_screen.dart';
+import 'package:spend_wise/screens/expense_budget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,44 +13,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   DateTime selectedDate = DateTime.now();
 
-  void _bottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      backgroundColor: Colors.white,
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.9,
-          minChildSize: 0.3,
-          maxChildSize: 0.9,
-          expand: false,
-          builder: (context, scrollController) {
-            return Container(
-              padding: const EdgeInsets.all(16),
-              child: SingleChildScrollView(
-                controller: scrollController,
-                child: const Showmodalbottomsheet(),
-              ),
-            );
-          },
-        );
-      },
+  void _navToExpenseBudget(BuildContext context){
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ExpenseBudget()),
     );
-  }
-
-  void _login() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const SignUpScreen(),
-      ),
-    );
-  }
-
-  void _signOut() {
-    FirebaseAuth.instance.signOut();
   }
 
   @override
@@ -62,10 +27,10 @@ class _HomePageState extends State<HomePage> {
         username: "John Doe",
         email: "johndoe@gmail.com",
         profilePictureUrl: "",
-        onLogIn: _login,
+        onLogIn: () {},
         isBackupEnabled: false,
         onBackupToggle: (bool value) {},
-        onLogout: _signOut,
+        onLogout: () {},
         onExit: () {},
       ),
       appBar: AppBar(
@@ -95,7 +60,7 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(width: 10),
           IconButton(
             icon: const Icon(Icons.add_circle_sharp, size: 20),
-            onPressed: _bottomSheet,
+            onPressed: () => _navToExpenseBudget(context),
           ),
           IconButton(
             icon: const Icon(Icons.notifications_none_rounded, size: 20),
@@ -111,8 +76,8 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.all(12),
               width: double.infinity,
               decoration: BoxDecoration(
-                color: const Color.fromRGBO(39, 68, 93, 1.0),
-                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(3),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,12 +92,8 @@ class _HomePageState extends State<HomePage> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text("Balance",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 14)),
-                          Text("\$32,450.00",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16)),
+                          Text("Balance", style: TextStyle(fontSize: 14)),
+                          Text("\$32,450.00", style: TextStyle(fontSize: 16)),
                         ],
                       ),
                     ],
@@ -157,8 +118,8 @@ class _HomePageState extends State<HomePage> {
                         width: 130,
                         height: 60,
                         decoration: BoxDecoration(
-                          color: const Color.fromRGBO(226, 241, 231, 1.0),
-                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(3),
                         ),
                         child: const Center(
                           child: Column(
@@ -184,8 +145,8 @@ class _HomePageState extends State<HomePage> {
                         width: 130,
                         height: 60,
                         decoration: BoxDecoration(
-                          color: const Color.fromRGBO(226, 241, 231, 1.0),
-                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(3),
                         ),
                         child: const Center(
                           child: Column(
@@ -239,8 +200,8 @@ class _HomePageState extends State<HomePage> {
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color.fromRGBO(226, 241, 231, 1.0),
-                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(3),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -277,8 +238,8 @@ class _HomePageState extends State<HomePage> {
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color.fromRGBO(226, 241, 231, 1.0),
-                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(3),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -313,7 +274,7 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             const SizedBox(height: 15),
-            // Transaction list with Card
+            // Transaction list with Container
             const Text(
               "Transactions",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
@@ -323,13 +284,13 @@ class _HomePageState extends State<HomePage> {
               child: ListView.builder(
                 itemCount: 10, // Number of transactions to display
                 itemBuilder: (context, index) {
-                  return Card(
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      side: const BorderSide(color: Colors.black),
-                      borderRadius: BorderRadius.circular(8),
+                  return Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(3),
                     ),
-                    margin: const EdgeInsets.only(bottom: 8), // Reduced margin
+                    margin: const EdgeInsets.only(bottom: 3), // Reduced margin
                     child: ListTile(
                       leading: const Icon(Icons.credit_card,
                           color: Colors.blue, size: 20), // Smaller icon
