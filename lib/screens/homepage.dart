@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:spend_wise/screens/items_list_screen.dart';
 import 'package:spend_wise/screens/Transction_budget.dart';
 import 'package:spend_wise/screens/drawer.dart';
 import 'package:spend_wise/screens/sign_up_screen.dart';
+import 'package:spend_wise/utils/transaction_item.dart';
+import 'package:spend_wise/utils/budget_progress.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,6 +14,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // Track the currently selected category
+  String _selectedCategory = 'Transaction'; // Default selection
 
   void _navToSignUpScreen(context) {
     Navigator.push(
@@ -18,12 +23,100 @@ class _HomePageState extends State<HomePage> {
       MaterialPageRoute(builder: (context) => const SignUpScreen()),
     );
   }
-  
-  void _navToTransctionBudget(BuildContext context, String title) {
+
+  void _navToTransactionBudget(BuildContext context, String title) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => TransctionBudget(title: title)),
     );
+  }
+
+  // Navigate to ItemsListScreen
+  void _navToItemsList(BuildContext context, String type) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ItemsListScreen(type: type)),
+    );
+  }
+
+  // Change the selected category
+  void _setSelectedCategory(String category) {
+    setState(() {
+      _selectedCategory = category;
+    });
+  }
+
+  // Get list of items based on selected category
+  List<Widget> _getItems() {
+    if (_selectedCategory == 'Transaction') {
+      // Return transaction items (showing fewer items on the homepage)
+      return [
+        const TransactionItem(
+          category: "Groceries",
+          method: "Credit Card",
+          date: "2025-04-01",
+          time: "14:30",
+          amount: 89.75,
+        ),
+        const TransactionItem(
+          category: "Entertainment",
+          method: "Debit Card",
+          date: "2025-04-02",
+          time: "19:45",
+          amount: 35.20,
+        ),
+        const TransactionItem(
+          category: "Restaurant",
+          method: "Cash",
+          date: "2025-04-03",
+          time: "12:15",
+          amount: 42.50,
+        ),
+      ];
+    } else if (_selectedCategory == 'Budget') {
+      // Return budget progress items (showing fewer items on the homepage)
+      return [
+        const BudgetProgress(
+          category: "Groceries",
+          startDate: "2025-04-01",
+          endDate: "2025-04-30",
+          amount: 400.00,
+          progress: 0.25, // 25% used
+        ),
+        const BudgetProgress(
+          category: "Entertainment",
+          startDate: "2025-04-01",
+          endDate: "2025-04-30",
+          amount: 200.00,
+          progress: 0.18, // 18% used
+        ),
+        const BudgetProgress(
+          category: "Restaurant",
+          startDate: "2025-04-01",
+          endDate: "2025-04-30",
+          amount: 300.00,
+          progress: 0.42, // 42% used
+        ),
+      ];
+    } else {
+      // For Analysis, we could return a placeholder or analysis widgets
+      return [
+        Container(
+          padding: const EdgeInsets.all(16),
+          margin: const EdgeInsets.only(top: 8),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.black),
+            borderRadius: BorderRadius.circular(3),
+          ),
+          child: const Center(
+            child: Text(
+              "Analysis functionality coming soon",
+              style: TextStyle(fontSize: 14),
+            ),
+          ),
+        ),
+      ];
+    }
   }
 
   @override
@@ -45,7 +138,7 @@ class _HomePageState extends State<HomePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add_circle_sharp, size: 20),
-            onPressed: () => _navToTransctionBudget(context, 'Transction'),
+            onPressed: () => _navToTransactionBudget(context, 'Transaction'),
           ),
           IconButton(
             icon: const Icon(Icons.notifications_none_rounded, size: 20),
@@ -158,141 +251,135 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const SizedBox(height: 15),
-            // Budgets section
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "My Budgets",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                ),
-                const SizedBox(width: 250),
-                IconButton(
-                  onPressed: () => _navToTransctionBudget(context, 'Budget'),
-                  icon: const Icon(Icons.add_circle_sharp, size: 20),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.arrow_forward_ios_sharp, size: 20),
-                ),
-              ],
-            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Monthly Budget",
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 12)),
-                            Text("\$2,000",
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 14)),
-                          ],
+                  child: GestureDetector(
+                    onTap: () => _setSelectedCategory('Transaction'),
+                    child: Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: _selectedCategory == 'Transaction'
+                              ? Colors.blueGrey
+                              : Colors.black,
+                          width: _selectedCategory == 'Transaction' ? 2 : 1,
                         ),
-                        const SizedBox(height: 5),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 6,
-                          child: LinearProgressIndicator(
-                            borderRadius: BorderRadius.circular(8),
-                            value: 0.7,
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                                Colors.black),
-                          ),
+                        borderRadius: BorderRadius.circular(3),
+                        color: _selectedCategory == 'Transaction'
+                            ? Colors.blue.withOpacity(0.1)
+                            : null,
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "Transaction",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12),
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(3),
+                  child: GestureDetector(
+                    onTap: () => _setSelectedCategory('Budget'),
+                    child: Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: _selectedCategory == 'Budget'
+                              ? Colors.blueGrey
+                              : Colors.black,
+                          width: _selectedCategory == 'Budget' ? 2 : 1,
+                        ),
+                        borderRadius: BorderRadius.circular(3),
+                        color: _selectedCategory == 'Budget'
+                            ? Colors.blue.withOpacity(0.1)
+                            : null,
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "Budget",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12),
+                        ),
+                      ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Yearly Budget",
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 12)),
-                            Text("\$24,000",
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 14)),
-                          ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => _setSelectedCategory('Analysis'),
+                    child: Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: _selectedCategory == 'Analysis'
+                              ? Colors.blueGrey
+                              : Colors.black,
+                          width: _selectedCategory == 'Analysis' ? 2 : 1,
                         ),
-                        const SizedBox(height: 5),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 6,
-                          child: LinearProgressIndicator(
-                            borderRadius: BorderRadius.circular(8),
-                            value: 0.5,
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                                Colors.black),
-                          ),
+                        borderRadius: BorderRadius.circular(3),
+                        color: _selectedCategory == 'Analysis'
+                            ? Colors.blue.withOpacity(0.1)
+                            : null,
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "Analysis",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12),
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 15),
-            // Transaction list with Container
-            const Text(
-              "Transactions",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            const SizedBox(height: 12),
+            // Display category title
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                children: [
+                  Text(
+                    _selectedCategory,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  TextButton(
+                    onPressed: () {
+                      // Navigate to ItemsListScreen with current category
+                      _navToItemsList(context, _selectedCategory);
+                    },
+                    child: const Text(
+                      "See All",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueGrey,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 15),
+            // Display items based on selected category
             Expanded(
-              child: ListView.builder(
-                itemCount: 10, // Number of transactions to display
-                itemBuilder: (context, index) {
-                  return Container(
-                    padding: const EdgeInsets.all(3),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                    margin: const EdgeInsets.only(bottom: 3), // Reduced margin
-                    child: ListTile(
-                      leading: const Icon(Icons.credit_card,
-                          color: Colors.blue, size: 20), // Smaller icon
-                      title: Text(
-                        "Credit card payment $index",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 14),
-                      ),
-                      subtitle: const Text(
-                        "Date: 2025-02-02 | Time: 10:00 AM",
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
-                      ),
-                      trailing: const Text(
-                        "\$250.00",
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  );
-                },
+              child: ListView(
+                children: _getItems(),
               ),
             ),
           ],
