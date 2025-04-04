@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:spend_wise/screens/Transction_budget.dart';
 import 'package:spend_wise/screens/drawer.dart';
-import 'package:spend_wise/screens/expense_budget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,11 +10,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-  void _navToExpenseBudget(BuildContext context, String title){
+  void _navToTransctionBudget(BuildContext context, String title) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ExpenseBudget(title:title)),
+      MaterialPageRoute(builder: (context) => TransctionBudget(title: title)),
     );
   }
 
@@ -35,10 +34,9 @@ class _HomePageState extends State<HomePage> {
         title:
             const Text("Welcome Back, Annie", style: TextStyle(fontSize: 18)),
         actions: [
-         
           IconButton(
             icon: const Icon(Icons.add_circle_sharp, size: 20),
-            onPressed: () => _navToExpenseBudget(context, 'Expense'),
+            onPressed: () => _navToTransctionBudget(context, 'Transction'),
           ),
           IconButton(
             icon: const Icon(Icons.notifications_none_rounded, size: 20),
@@ -83,7 +81,6 @@ class _HomePageState extends State<HomePage> {
                     child: LinearProgressIndicator(
                       borderRadius: BorderRadius.circular(8),
                       value: 0.7,
-                      
                       valueColor: const AlwaysStoppedAnimation<Color>(
                           Color.fromRGBO(33, 33, 33, 1.0)),
                     ),
@@ -131,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text("Expense",
+                              Text("Transction",
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold,
@@ -162,7 +159,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(width: 250),
                 IconButton(
-                  onPressed: () => _navToExpenseBudget(context, 'Budget'),
+                  onPressed: () => _navToTransctionBudget(context, 'Budget'),
                   icon: const Icon(Icons.add_circle_sharp, size: 20),
                 ),
                 IconButton(
@@ -202,7 +199,6 @@ class _HomePageState extends State<HomePage> {
                           child: LinearProgressIndicator(
                             borderRadius: BorderRadius.circular(8),
                             value: 0.7,
-                            
                             valueColor: const AlwaysStoppedAnimation<Color>(
                                 Colors.black),
                           ),
@@ -240,7 +236,6 @@ class _HomePageState extends State<HomePage> {
                           child: LinearProgressIndicator(
                             borderRadius: BorderRadius.circular(8),
                             value: 0.5,
-                            
                             valueColor: const AlwaysStoppedAnimation<Color>(
                                 Colors.black),
                           ),

@@ -1,11 +1,11 @@
-class Expense {
+class Transction {
   final String category;
   final String method;
   final String date;
   final String time;
   final double amount;
 
-  const Expense({
+  const Transction({
     required this.category,
     required this.method,
     required this.date,
@@ -13,8 +13,8 @@ class Expense {
     required this.amount,
   });
 
-  factory Expense.fromJson(Map<String, dynamic> json) {
-    return Expense(
+  factory Transction.fromJson(Map<String, dynamic> json) {
+    return Transction(
       category: json['category'],
       method: json['method'],
       date: json['date'],

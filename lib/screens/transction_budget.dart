@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-class ExpenseBudget extends StatefulWidget {
+class TransctionBudget extends StatefulWidget {
   final String title;
-  const ExpenseBudget({required this.title, super.key});
+  const TransctionBudget({required this.title, super.key});
 
   @override
-  State<ExpenseBudget> createState() => _ExpenseBudgetState();
+  State<TransctionBudget> createState() => _TransctionBudgetState();
 }
 
-class _ExpenseBudgetState extends State<ExpenseBudget> {
+class _TransctionBudgetState extends State<TransctionBudget> {
   final List<String> _category = [
     'Housing',
     'Utilities',
@@ -29,7 +29,7 @@ class _ExpenseBudgetState extends State<ExpenseBudget> {
     'Insurance',
     'Childcare & Education',
     'Pets',
-    'Miscellaneous Expenses'
+    'Miscellaneous Transctions'
   ];
 
   void _showAddCategoryDialog() {
@@ -70,7 +70,7 @@ class _ExpenseBudgetState extends State<ExpenseBudget> {
     );
   }
 
-  void _addExpenseBudget(BuildContext context, String category) {
+  void _addTransctionBudget(BuildContext context, String category) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -213,7 +213,7 @@ class _ExpenseBudgetState extends State<ExpenseBudget> {
             ..._category.map(
               (item) {
                 return GestureDetector(
-                  onTap: () => _addExpenseBudget(context, item),
+                  onTap: () => _addTransctionBudget(context, item),
                   child: Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

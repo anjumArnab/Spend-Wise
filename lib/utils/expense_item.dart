@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class ExpenseItem extends StatelessWidget {
+class TransctionItem extends StatelessWidget {
   final String category;
   final String method;
   final String date;
   final String time;
   final double amount;
 
-  const ExpenseItem({
+  const TransctionItem({
     super.key,
     required this.category,
     required this.method,

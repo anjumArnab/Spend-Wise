@@ -12,6 +12,7 @@ class Budget {
     required this.startDate,
     required this.endDate,
   });
+  
   factory Budget.fromJson(Map<String, dynamic> json) {
     return Budget(
       id: json['id'],
