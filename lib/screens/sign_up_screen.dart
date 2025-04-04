@@ -235,17 +235,3 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 }
-
-/*
-ElevatedButton(
-      onPressed: () => setState(() => _isSignUp = isSignUp),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: _isSignUp == isSignUp
-            ? const Color.fromRGBO(23, 59, 69, 1)
-            : Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-      ),
-      child: Text(text,
-          style: TextStyle(
-              color: _isSignUp == isSignUp ? Colors.white : Colors.black)),
-    );*/
