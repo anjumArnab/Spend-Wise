@@ -104,7 +104,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
-    Future<void> _logIn() async {
+  Future<void> _logIn() async {
     setState(() {
       _isLoading = true;
     });
