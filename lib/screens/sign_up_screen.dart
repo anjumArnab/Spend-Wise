@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spend_wise/screens/homepage.dart';
 import 'package:spend_wise/services/authentication.dart';
+import 'package:spend_wise/utils/border_button.dart';
 import 'package:spend_wise/utils/show_snack_bar.dart';
 import 'package:spend_wise/utils/text_field.dart';
 
@@ -209,16 +210,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 : SizedBox(
                     width: 150,
                     height: 50,
-                    child: ElevatedButton(
+                    child: BorderButton(
+                      text: _isSignUp ? "Sign Up" : "Log In",
                       onPressed: () => _isSignUp ? _signUp() : _logIn(),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromRGBO(23, 59, 69, 1),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30)),
-                      ),
-                      child: Text(_isSignUp ? "Sign Up" : "Log In",
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 16)),
                     ),
                   ),
           ],
@@ -235,7 +229,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget buildToggleButton(String text, bool isSignUp) {
-    return ElevatedButton(
+    return BorderButton(
+      text: text,
+      onPressed: () => setState(() => _isSignUp = isSignUp),
+    );
+  }
+}
+
+/*
+ElevatedButton(
       onPressed: () => setState(() => _isSignUp = isSignUp),
       style: ElevatedButton.styleFrom(
         backgroundColor: _isSignUp == isSignUp
@@ -246,6 +248,4 @@ class _SignUpScreenState extends State<SignUpScreen> {
       child: Text(text,
           style: TextStyle(
               color: _isSignUp == isSignUp ? Colors.white : Colors.black)),
-    );
-  }
-}
+    );*/
