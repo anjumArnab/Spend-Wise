@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:spend_wise/models/payment.dart';
+import 'package:spend_wise/services/authentication.dart';
+import 'package:spend_wise/services/cloud_store.dart';
+import 'package:spend_wise/utils/border_button.dart';
 
 class TransctionBudget extends StatefulWidget {
   final String title;
@@ -9,6 +13,15 @@ class TransctionBudget extends StatefulWidget {
 }
 
 class _TransctionBudgetState extends State<TransctionBudget> {
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _paymentMethodController =
+      TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
+
+  final FirebaseAuthService _authService = FirebaseAuthService();
+  final FirestoreService _db = FirestoreService();
+
   final List<String> _category = [
     'Housing',
     'Utilities',
@@ -31,6 +44,45 @@ class _TransctionBudgetState extends State<TransctionBudget> {
     'Pets',
     'Miscellaneous Transctions'
   ];
+
+  // Modify _addPayment to accept a category parameter
+  Future<void> _addPayment(String category) async {
+    final amount = _amountController.text.trim();
+    final paymentMethod = _paymentMethodController.text.trim();
+    final date = _dateController.text.trim();
+    final time = _timeController.text.trim();
+
+    // Convert the amount string to double
+    double amountValue;
+    try {
+      amountValue = double.parse(amount);
+    } catch (e) {
+      // Handle invalid amount format
+      print("Invalid amount format: $e");
+      return;
+    }
+
+    // Create the Payment object
+    final payment = Payment(
+      category: category,
+      method: paymentMethod,
+      date: date,
+      time: time,
+      amount: amountValue,
+    );
+
+    // Add the payment to the database
+    await _db.addPayment(_authService.currentUser!.uid, payment);
+
+    // Clear the text fields after adding payment
+    _amountController.clear();
+    _paymentMethodController.clear();
+    _dateController.clear();
+    _timeController.clear();
+
+    // Close the bottom sheet
+    Navigator.pop(context);
+  }
 
   void _showAddCategoryDialog() {
     TextEditingController categoryController = TextEditingController();
@@ -71,131 +123,113 @@ class _TransctionBudgetState extends State<TransctionBudget> {
   }
 
   void _addTransctionBudget(BuildContext context, String category) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-    ),
-    builder: (context) {
-      return Padding(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 16,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "${widget.title} - $category",
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-
-              // Amount & Payment Method Row
-              const Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        labelText: "Amount",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        labelText: "Payment Method",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-
-              // Notes Field
-              const TextField(
-                decoration: InputDecoration(
-                  labelText: "Notes",
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 2,
-              ),
-              const SizedBox(height: 10),
-
-              // Date and Time Row
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        labelText: "Date",
-                        border: OutlineInputBorder(),
-                      ),
-                      readOnly: true,
-                      onTap: () async {
-                        await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2100),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        labelText: "Time",
-                        border: OutlineInputBorder(),
-                      ),
-                      readOnly: true,
-                      onTap: () async {
-                        await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.now(),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-
-              // Description Field
-              const TextField(
-                decoration:InputDecoration(
-                  labelText: "Description",
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 20),
-
-              // Submit Button
-              ElevatedButton(
-                onPressed: () {
-                  // Handle form submission
-                  Navigator.pop(context);
-                },
-                child: const Text("Add"),
-              ),
-            ],
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 16,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
           ),
-        ),
-      );
-    },
-  );
-}
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "${widget.title} - $category",
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
 
+                // Amount & Payment Method Row
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _amountController,
+                        decoration: const InputDecoration(
+                          labelText: "Amount",
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: _paymentMethodController,
+                        decoration: const InputDecoration(
+                          labelText: "Payment Method",
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+
+                const SizedBox(height: 10),
+
+                // Date and Time Row
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _dateController,
+                        decoration: const InputDecoration(
+                          labelText: "Date",
+                          border: OutlineInputBorder(),
+                        ),
+                        readOnly: true,
+                        onTap: () async {
+                          await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2100),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: _timeController,
+                        decoration: const InputDecoration(
+                          labelText: "Time",
+                          border: OutlineInputBorder(),
+                        ),
+                        readOnly: true,
+                        onTap: () async {
+                          await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+
+                BorderButton(
+                  text: "Add",
+                  onPressed: () => _addPayment(category),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
