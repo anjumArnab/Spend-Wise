@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:spend_wise/models/budget.dart';
 import 'package:spend_wise/models/payment.dart';
 
-
 class FirestoreService {
   // final FirebaseFirestore _db = FirebaseFirestore.instance;
 
