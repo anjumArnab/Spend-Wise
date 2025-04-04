@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spend_wise/screens/Transction_budget.dart';
 import 'package:spend_wise/screens/drawer.dart';
+import 'package:spend_wise/screens/sign_up_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,6 +11,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  void _navToSignUpScreen(context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SignUpScreen()),
+    );
+  }
+  
   void _navToTransctionBudget(BuildContext context, String title) {
     Navigator.push(
       context,
@@ -24,7 +33,7 @@ class _HomePageState extends State<HomePage> {
         username: "John Doe",
         email: "johndoe@gmail.com",
         profilePictureUrl: "",
-        onLogIn: () {},
+        onLogIn: () => _navToSignUpScreen(context),
         isBackupEnabled: false,
         onBackupToggle: (bool value) {},
         onLogout: () {},
