@@ -1,5 +1,5 @@
 import 'package:spend_wise/models/budget.dart';
-import 'package:spend_wise/models/transction.dart';
+import 'package:spend_wise/models/payment.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -116,12 +116,12 @@ class DatabaseHelper {
 
   // TRANSACTION CRUD OPERATIONS
   
-  Future<int> createTransaction(Transction transaction) async {
+  Future<int> createPayment(Payment payment) async {
     final db = await instance.database;
-    return await db.insert('transactions', transaction.toJson());
+    return await db.insert('transactions', payment.toJson());
   }
 
-  Future<Transction> readTransaction(int id) async {
+  Future<Payment> readPayment(int id) async {
     final db = await instance.database;
     final maps = await db.query(
       'transactions',
@@ -131,49 +131,49 @@ class DatabaseHelper {
     );
 
     if (maps.isNotEmpty) {
-      return Transction.fromJson(maps.first);
+      return Payment.fromJson(maps.first);
     } else {
       throw Exception('Transaction with ID $id not found');
     }
   }
 
-  Future<List<Transction>> readAllTransactions() async {
+  Future<List<Payment>> readAllPayments() async {
     final db = await instance.database;
     final result = await db.query('transactions');
-    return result.map((json) => Transction.fromJson(json)).toList();
+    return result.map((json) => Payment.fromJson(json)).toList();
   }
 
-  Future<List<Transction>> readTransactionsByCategory(String category) async {
+  Future<List<Payment>> readPaymentsByCategory(String category) async {
     final db = await instance.database;
     final result = await db.query(
       'transactions',
       where: 'category = ?',
       whereArgs: [category],
     );
-    return result.map((json) => Transction.fromJson(json)).toList();
+    return result.map((json) => Payment.fromJson(json)).toList();
   }
 
-  Future<List<Transction>> readTransactionsByDateRange(String startDate, String endDate) async {
+  Future<List<Payment>> readPaymentByDateRange(String startDate, String endDate) async {
     final db = await instance.database;
     final result = await db.query(
       'transactions',
       where: 'date >= ? AND date <= ?',
       whereArgs: [startDate, endDate],
     );
-    return result.map((json) => Transction.fromJson(json)).toList();
+    return result.map((json) => Payment.fromJson(json)).toList();
   }
 
-  Future<int> updateTransaction(int id, Transction transaction) async {
+  Future<int> updatePayment(int id, Payment payment) async {
     final db = await instance.database;
     return await db.update(
       'transactions',
-      transaction.toJson(),
+      payment.toJson(),
       where: 'id = ?',
       whereArgs: [id],
     );
   }
 
-  Future<int> deleteTransaction(int id) async {
+  Future<int> deletePayment(int id) async {
     final db = await instance.database;
     return await db.delete(
       'transactions',
