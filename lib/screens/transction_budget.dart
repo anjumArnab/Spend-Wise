@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spend_wise/models/budget.dart';
 import 'package:spend_wise/models/payment.dart';
 import 'package:spend_wise/services/authentication.dart';
 import 'package:spend_wise/services/cloud_store.dart';
@@ -18,6 +19,8 @@ class _TransctionBudgetState extends State<TransctionBudget> {
       TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
+  final TextEditingController _startDateController = TextEditingController();
+  final TextEditingController _endDateController = TextEditingController();
 
   final FirebaseAuthService _authService = FirebaseAuthService();
   final FirestoreService _db = FirestoreService();
@@ -79,6 +82,39 @@ class _TransctionBudgetState extends State<TransctionBudget> {
     _paymentMethodController.clear();
     _dateController.clear();
     _timeController.clear();
+
+    // Close the bottom sheet
+    Navigator.pop(context);
+  }
+
+  Future<void> _addBudget(String category) async {
+    final amount = _amountController.text.trim();
+    final startDate = _startDateController.text.trim();
+    final endDate = _endDateController.text.trim();
+
+    // Convert the amount string to double
+    double amountValue;
+    try {
+      amountValue = double.parse(amount);
+    } catch (e) {
+      // Handle invalid amount format
+      print("Invalid amount format: $e");
+      return;
+    }
+
+    final budget = Budget(
+      id: 0,
+      category: category,
+      amount: amountValue,
+      startDate: startDate,
+      endDate: endDate,
+    );
+    await _db.addBudget(_authService.currentUser!.uid, budget);
+
+    // Clear the text fields after adding payment
+    _amountController.clear();
+    _startDateController.clear();
+    _endDateController.clear();
 
     // Close the bottom sheet
     Navigator.pop(context);
@@ -163,13 +199,15 @@ class _TransctionBudgetState extends State<TransctionBudget> {
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: TextField(
-                        controller: _paymentMethodController,
-                        decoration: const InputDecoration(
-                          labelText: "Payment Method",
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
+                      child: widget.title == 'Transaction'
+                          ? TextField(
+                              controller: _paymentMethodController,
+                              decoration: const InputDecoration(
+                                labelText: "Payment Method",
+                                border: OutlineInputBorder(),
+                              ),
+                            )
+                          : const SizedBox(),
                     ),
                   ],
                 ),
@@ -181,39 +219,109 @@ class _TransctionBudgetState extends State<TransctionBudget> {
                 Row(
                   children: [
                     Expanded(
-                      child: TextField(
-                        controller: _dateController,
-                        decoration: const InputDecoration(
-                          labelText: "Date",
-                          border: OutlineInputBorder(),
-                        ),
-                        readOnly: true,
-                        onTap: () async {
-                          await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                          );
-                        },
-                      ),
+                      child: widget.title == 'Transaction'
+                          ? TextField(
+                              controller: _dateController,
+                              decoration: const InputDecoration(
+                                labelText: "Date",
+                                border: OutlineInputBorder(),
+                              ),
+                              readOnly: true,
+                              onTap: () async {
+                                DateTime? pickedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime(2100),
+                                );
+
+                                if (pickedDate != null) {
+                                  // Format the date (optional, for better readability)
+                                  String formattedDate =
+                                      "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                  setState(() {
+                                    _dateController.text = formattedDate;
+                                  });
+                                }
+                              },
+                            )
+                          : TextField(
+                              controller: _startDateController,
+                              decoration: const InputDecoration(
+                                labelText: "Start Date",
+                                border: OutlineInputBorder(),
+                              ),
+                              readOnly: true,
+                              onTap: () async {
+                                DateTime? pickedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime(2100),
+                                );
+
+                                if (pickedDate != null) {
+                                  String formattedDate =
+                                      "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                  setState(() {
+                                    _startDateController.text = formattedDate;
+                                  });
+                                }
+                              },
+                            ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: TextField(
-                        controller: _timeController,
-                        decoration: const InputDecoration(
-                          labelText: "Time",
-                          border: OutlineInputBorder(),
-                        ),
-                        readOnly: true,
-                        onTap: () async {
-                          await showTimePicker(
-                            context: context,
-                            initialTime: TimeOfDay.now(),
-                          );
-                        },
-                      ),
+                      child: widget.title == 'Transaction'
+                          ? TextField(
+                              controller: _timeController,
+                              decoration: const InputDecoration(
+                                labelText: "Time",
+                                border: OutlineInputBorder(),
+                              ),
+                              readOnly: true,
+                              onTap: () async {
+                                TimeOfDay? pickedTime = await showTimePicker(
+                                  context: context,
+                                  initialTime: TimeOfDay.now(),
+                                );
+
+                                if (pickedTime != null) {
+                                  DateTime.now();
+                                  final formattedTime = TimeOfDay(
+                                    hour: pickedTime.hour,
+                                    minute: pickedTime.minute,
+                                  ).format(context);
+                                  setState(() {
+                                    _timeController.text = formattedTime;
+                                  });
+                                }
+                              },
+                            )
+                          : TextField(
+                              controller: _endDateController,
+                              decoration: const InputDecoration(
+                                labelText: "End Date",
+                                border: OutlineInputBorder(),
+                              ),
+                              readOnly: true,
+                              onTap: () async {
+                                DateTime? pickedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime(2100),
+                                );
+
+                                if (pickedDate != null) {
+                                  String formattedDate =
+                                      "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                  setState(() {
+                                    _endDateController.text = formattedDate;
+                                  });
+                                }
+                              },
+                            ),
                     ),
                   ],
                 ),
@@ -221,7 +329,9 @@ class _TransctionBudgetState extends State<TransctionBudget> {
 
                 BorderButton(
                   text: "Add",
-                  onPressed: () => _addPayment(category),
+                  onPressed: widget.title == 'Transaction'
+                      ? () => _addPayment(category)
+                      : () => _addBudget(category),
                 )
               ],
             ),
