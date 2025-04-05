@@ -3,67 +3,81 @@ import 'package:spend_wise/models/budget.dart';
 import 'package:spend_wise/models/payment.dart';
 
 class FirestoreService {
-  // final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // References to the collections
-  final CollectionReference paymentCollection = FirebaseFirestore.instance.collection('payments');
-  final CollectionReference budgetCollection = FirebaseFirestore.instance.collection('budgets');
-
-  // Add a Payment
+  // Add a Payment (multiple payments under each user)
   Future<void> addPayment(String uid, Payment payment) async {
     try {
-      await paymentCollection.add({
-        'userId': uid,
-        ...payment.toJson(),
-      });
+      final paymentRef = _db
+          .collection('payment')
+          .doc(uid)
+          .collection('transactions')
+          .doc(); // auto-ID
+      await paymentRef.set(payment.toJson());
     } catch (e) {
       print("Error adding payment: $e");
     }
   }
 
-  // Add a Budget
+  // Add a Budget (multiple budgets under each user)
   Future<void> addBudget(String uid, Budget budget) async {
     try {
-      await budgetCollection.add({
-        'userId': uid,
-        ...budget.toJson(),
-      });
+      final budgetRef = _db
+          .collection('budget')
+          .doc(uid)
+          .collection('items')
+          .doc(); // auto-ID
+      await budgetRef.set(budget.toJson());
     } catch (e) {
       print("Error adding budget: $e");
     }
   }
 
-  // Get Payments by user
+  // Get all Payments by user
   Stream<List<Payment>> getPayments(String uid) {
-    return paymentCollection
-        .where('userId', isEqualTo: uid)
+    return _db
+        .collection('payment')
+        .doc(uid)
+        .collection('transactions')
         .snapshots()
         .map((snapshot) =>
-            snapshot.docs.map((doc) => Payment.fromJson(doc.data() as Map<String, dynamic>)).toList());
+            snapshot.docs.map((doc) => Payment.fromJson(doc.data())).toList());
   }
 
-  // Get Budgets by user
+  // Get all Budgets by user
   Stream<List<Budget>> getBudgets(String uid) {
-    return budgetCollection
-        .where('userId', isEqualTo: uid)
+    return _db
+        .collection('budget')
+        .doc(uid)
+        .collection('items')
         .snapshots()
         .map((snapshot) =>
-            snapshot.docs.map((doc) => Budget.fromJson(doc.data() as Map<String, dynamic>)).toList());
+            snapshot.docs.map((doc) => Budget.fromJson(doc.data())).toList());
   }
 
-  // Optional: Update Budget
-  Future<void> updateBudget(String docId, Budget budget) async {
+  // Update a specific Budget item
+  Future<void> updateBudget(String uid, String budgetId, Budget budget) async {
     try {
-      await budgetCollection.doc(docId).update(budget.toJson());
+      await _db
+          .collection('budget')
+          .doc(uid)
+          .collection('items')
+          .doc(budgetId)
+          .update(budget.toJson());
     } catch (e) {
       print("Error updating budget: $e");
     }
   }
 
-  // Optional: Delete Payment
-  Future<void> deletePayment(String docId) async {
+  // Delete a specific Payment
+  Future<void> deletePayment(String uid, String paymentId) async {
     try {
-      await paymentCollection.doc(docId).delete();
+      await _db
+          .collection('payment')
+          .doc(uid)
+          .collection('transactions')
+          .doc(paymentId)
+          .delete();
     } catch (e) {
       print("Error deleting payment: $e");
     }
