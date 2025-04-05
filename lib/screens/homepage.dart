@@ -3,6 +3,8 @@ import 'package:spend_wise/screens/items_list_screen.dart';
 import 'package:spend_wise/screens/Transction_budget.dart';
 import 'package:spend_wise/screens/drawer.dart';
 import 'package:spend_wise/screens/sign_up_screen.dart';
+import 'package:spend_wise/services/authentication.dart';
+import 'package:spend_wise/services/cloud_store.dart';
 import 'package:spend_wise/utils/transaction_item.dart';
 import 'package:spend_wise/utils/budget_progress.dart';
 
@@ -16,6 +18,40 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // Track the currently selected category
   String _selectedCategory = 'Transaction'; // Default selection
+  final FirebaseAuthService _authService = FirebaseAuthService();
+  final FirestoreService _db = FirestoreService();
+
+  late Future<List<dynamic>> _transactions;
+  late Future<List<dynamic>> _budgets;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  void _loadData() {
+    _transactions = _getAllPayments();
+    _budgets = _getAllBudgets();
+  }
+
+  // Fetch Payments (Transaction items)
+  Future<List<dynamic>> _getAllPayments() async {
+    if (_authService.currentUser != null) {
+      return await _db.getPayments(_authService.currentUser!.uid).first;
+    } else {
+      return [];
+    }
+  }
+
+  // Fetch Budgets
+  Future<List<dynamic>> _getAllBudgets() async {
+    if (_authService.currentUser != null) {
+      return await _db.getBudgets(_authService.currentUser!.uid).first;
+    } else {
+      return [];
+    }
+  }
 
   void _navToSignUpScreen(context) {
     Navigator.push(
@@ -46,79 +82,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // Get list of items based on selected category
-  List<Widget> _getItems() {
-    if (_selectedCategory == 'Transaction') {
-      // Return transaction items (showing fewer items on the homepage)
-      return [
-        const TransactionItem(
-          category: "Groceries",
-          method: "Credit Card",
-          date: "2025-04-01",
-          time: "14:30",
-          amount: 89.75,
-        ),
-        const TransactionItem(
-          category: "Entertainment",
-          method: "Debit Card",
-          date: "2025-04-02",
-          time: "19:45",
-          amount: 35.20,
-        ),
-        const TransactionItem(
-          category: "Restaurant",
-          method: "Cash",
-          date: "2025-04-03",
-          time: "12:15",
-          amount: 42.50,
-        ),
-      ];
-    } else if (_selectedCategory == 'Budget') {
-      // Return budget progress items (showing fewer items on the homepage)
-      return [
-        const BudgetProgress(
-          category: "Groceries",
-          startDate: "2025-04-01",
-          endDate: "2025-04-30",
-          amount: 400.00,
-          progress: 0.25, // 25% used
-        ),
-        const BudgetProgress(
-          category: "Entertainment",
-          startDate: "2025-04-01",
-          endDate: "2025-04-30",
-          amount: 200.00,
-          progress: 0.18, // 18% used
-        ),
-        const BudgetProgress(
-          category: "Restaurant",
-          startDate: "2025-04-01",
-          endDate: "2025-04-30",
-          amount: 300.00,
-          progress: 0.42, // 42% used
-        ),
-      ];
-    } else {
-      // For Analysis, we could return a placeholder or analysis widgets
-      return [
-        Container(
-          padding: const EdgeInsets.all(16),
-          margin: const EdgeInsets.only(top: 8),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.black),
-            borderRadius: BorderRadius.circular(3),
-          ),
-          child: const Center(
-            child: Text(
-              "Analysis functionality coming soon",
-              style: TextStyle(fontSize: 14),
-            ),
-          ),
-        ),
-      ];
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,6 +102,10 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.add_circle_sharp, size: 20),
             onPressed: () => _navToTransactionBudget(context, 'Transaction'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.add_circle_sharp, size: 20),
+            onPressed: () => _navToTransactionBudget(context, 'Budget'),
           ),
           IconButton(
             icon: const Icon(Icons.notifications_none_rounded, size: 20),
@@ -378,13 +345,93 @@ class _HomePageState extends State<HomePage> {
             ),
             // Display items based on selected category
             Expanded(
-              child: ListView(
-                children: _getItems(),
-              ),
-            ),
+              child: _selectedCategory == 'Transaction'
+                  ? _buildTransactionsList()
+                  : _selectedCategory == 'Budget'
+                      ? _buildBudgetsList()
+                      : const Center(child: Text('Analytics coming soon')),
+            )
           ],
         ),
       ),
+    );
+  }
+
+  // Build transactions list view
+  Widget _buildTransactionsList() {
+    return FutureBuilder<List<dynamic>>(
+      future: _transactions,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Center(child: Text('Error fetching data'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No transactions available'));
+        } else {
+          List<dynamic> transactions = snapshot.data!;
+          return ListView.builder(
+            itemCount: transactions.length,
+            itemBuilder: (context, index) {
+              var payment = transactions[index];
+              return TransactionItem(
+                category: payment.category,
+                method: payment.method,
+                date: payment.date,
+                time: payment.time,
+                amount: payment.amount,
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
+  // Build budgets list view with correct progress calculation
+  Widget _buildBudgetsList() {
+    return FutureBuilder<List<List<dynamic>>>(
+      future: Future.wait([_budgets, _transactions]), // Wait for both budgets and transactions
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Center(child: Text('Error fetching data'));
+        } else if (!snapshot.hasData || 
+                  snapshot.data![0].isEmpty) {
+          return const Center(child: Text('No budgets available'));
+        } else {
+          List<dynamic> budgets = snapshot.data![0];
+          List<dynamic> transactions = snapshot.data![1];
+          
+          return ListView.builder(
+            itemCount: budgets.length,
+            itemBuilder: (context, index) {
+              var budget = budgets[index];
+              
+              // Calculate progress by matching transactions with budget category
+              double totalSpent = 0;
+              for (var transaction in transactions) {
+                if (transaction.category == budget.category) {
+                  totalSpent += transaction.amount;
+                }
+              }
+              
+              // Calculate progress as a ratio of spent amount to budget amount
+              double progress = budget.amount > 0 ? totalSpent / budget.amount : 0;
+              progress = progress.clamp(0.0, 1.0); // Ensure it is between 0 and 1
+              
+              return BudgetProgress(
+                category: budget.category,
+                startDate: budget.startDate,
+                endDate: budget.endDate,
+                amount: budget.amount,
+                progress: progress,
+              );
+            },
+          );
+        }
+      },
     );
   }
 }

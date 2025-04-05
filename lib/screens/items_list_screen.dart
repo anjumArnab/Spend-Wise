@@ -1,108 +1,156 @@
-// Create a new screen to display either transactions or budgets
 import 'package:flutter/material.dart';
+import 'package:spend_wise/services/authentication.dart';
+import 'package:spend_wise/services/cloud_store.dart';
 import 'package:spend_wise/utils/budget_progress.dart';
 import 'package:spend_wise/utils/transaction_item.dart';
 
-class ItemsListScreen extends StatelessWidget {
-  final String type; // Either 'Transaction' or 'Budget'
-
+class ItemsListScreen extends StatefulWidget {
+  final String type; // 'Transaction' or 'Budget'
   const ItemsListScreen({super.key, required this.type});
+
+  @override
+  _ItemsListScreenState createState() => _ItemsListScreenState();
+}
+
+class _ItemsListScreenState extends State<ItemsListScreen> {
+  final FirebaseAuthService _authService = FirebaseAuthService();
+  final FirestoreService _db = FirestoreService();
+  late Future<List<dynamic>> _items;
+  // For budget progress calculation
+  late Future<Map<String, dynamic>> _combinedData;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.type == 'Transaction') {
+      _items = _getAllPayments();
+    } else {
+      // For budgets, we need both budgets and payments
+      _combinedData = _getCombinedData();
+    }
+  }
+
+  // Fetch Payments (Transaction items)
+  Future<List<dynamic>> _getAllPayments() async {
+    if (_authService.currentUser != null) {
+      return await _db.getPayments(_authService.currentUser!.uid).first;
+    } else {
+      return [];
+    }
+  }
+
+  // Fetch Budgets
+  Future<List<dynamic>> _getAllBudgets() async {
+    if (_authService.currentUser != null) {
+      return await _db.getBudgets(_authService.currentUser!.uid).first;
+    } else {
+      return [];
+    }
+  }
+
+  // Fetch both budgets and payments and combine them
+  Future<Map<String, dynamic>> _getCombinedData() async {
+    final budgetsData = await _getAllBudgets();
+    final paymentsData = await _getAllPayments();
+    
+    return {
+      'budgets': budgetsData,
+      'payments': paymentsData,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(type, style: const TextStyle(fontSize: 18)),
+        title: widget.type == 'Transaction'
+            ? const Text('Transactions')
+            : const Text('Budgets')
       ),
       body: Padding(
         padding: const EdgeInsets.all(12),
-        child: ListView(
-          children: _buildListItems(),
-        ),
+        child: widget.type == 'Transaction' 
+            ? _buildTransactionsList()
+            : _buildBudgetsList(),
       ),
     );
   }
 
-  List<Widget> _buildListItems() {
-    if (type == 'Transaction') {
-      // Sample transaction data - you would typically get this from a database or state management
-      return [
-        const TransactionItem(
-          category: "Groceries",
-          method: "Credit Card",
-          date: "2025-04-01",
-          time: "14:30",
-          amount: 89.75,
-        ),
-        const TransactionItem(
-          category: "Entertainment",
-          method: "Debit Card",
-          date: "2025-04-02",
-          time: "19:45",
-          amount: 35.20,
-        ),
-        const TransactionItem(
-          category: "Restaurant",
-          method: "Cash",
-          date: "2025-04-03",
-          time: "12:15",
-          amount: 42.50,
-        ),
-        const TransactionItem(
-          category: "Shopping",
-          method: "Credit Card",
-          date: "2025-04-03",
-          time: "16:20",
-          amount: 127.99,
-        ),
-        const TransactionItem(
-          category: "Utilities",
-          method: "Bank Transfer",
-          date: "2025-04-04",
-          time: "09:10",
-          amount: 145.32,
-        ),
-      ];
-    } else if (type == 'Budget') {
-      // Sample budget data
-      return [
-        const BudgetProgress(
-          category: "Groceries",
-          startDate: "2025-04-01",
-          endDate: "2025-04-30",
-          amount: 400.00,
-          progress: 0.25, // 25% used
-        ),
-        const BudgetProgress(
-          category: "Entertainment",
-          startDate: "2025-04-01",
-          endDate: "2025-04-30",
-          amount: 200.00,
-          progress: 0.18, // 18% used
-        ),
-        const BudgetProgress(
-          category: "Restaurant",
-          startDate: "2025-04-01",
-          endDate: "2025-04-30",
-          amount: 300.00,
-          progress: 0.42, // 42% used
-        ),
-        const BudgetProgress(
-          category: "Shopping",
-          startDate: "2025-04-01",
-          endDate: "2025-04-30",
-          amount: 500.00,
-          progress: 0.65, // 65% used
-        ),
-        const BudgetProgress(
-          category: "Utilities",
-          startDate: "2025-04-01",
-          endDate: "2025-04-30",
-          amount: 350.00,
-          progress: 0.8, // 80% used
-        ),
-      ];
-    }
-    return []; // Return empty list if type is neither 'Transaction' nor 'Budget'
+  // Build transactions list view
+  Widget _buildTransactionsList() {
+    return FutureBuilder<List<dynamic>>(
+      future: _items,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Center(child: Text('Error fetching data'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No transactions available'));
+        } else {
+          List<dynamic> transactions = snapshot.data!;
+          return ListView.builder(
+            itemCount: transactions.length,
+            itemBuilder: (context, index) {
+              var payment = transactions[index];
+              return TransactionItem(
+                category: payment.category,
+                method: payment.method,
+                date: payment.date,
+                time: payment.time,
+                amount: payment.amount,
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
+  // Build budgets list view with correct progress calculation
+  Widget _buildBudgetsList() {
+    return FutureBuilder<Map<String, dynamic>>(
+      future: _combinedData,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Center(child: Text('Error fetching data'));
+        } else if (!snapshot.hasData || 
+                  (snapshot.data!['budgets'] as List).isEmpty) {
+          return const Center(child: Text('No budgets available'));
+        } else {
+          List<dynamic> budgets = snapshot.data!['budgets'];
+          List<dynamic> payments = snapshot.data!['payments'];
+          
+          return ListView.builder(
+            itemCount: budgets.length,
+            itemBuilder: (context, index) {
+              var budget = budgets[index];
+              
+              // Calculate progress by matching payments with budget category
+              double totalSpent = 0;
+              for (var payment in payments) {
+                if (payment.category == budget.category) {
+                  totalSpent += payment.amount;
+                }
+              }
+              
+              // Calculate progress as a ratio of spent amount to budget amount
+              double progress = budget.amount > 0 ? totalSpent / budget.amount : 0;
+              progress = progress.clamp(0.0, 1.0); // Ensure it is between 0 and 1
+              
+              return BudgetProgress(
+                category: budget.category,
+                startDate: budget.startDate,
+                endDate: budget.endDate,
+                amount: budget.amount,
+                progress: progress,
+              );
+            },
+          );
+        }
+      },
+    );
   }
 }
