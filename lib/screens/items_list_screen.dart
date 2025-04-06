@@ -76,19 +76,27 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
     }
   }
 
-  // Delete a payment
-  Future<void> _deletePayment(String paymentId) async {
-    if (_authService.currentUser != null) {
-      await _db.deletePayment(_authService.currentUser!.uid, paymentId);
-    }
+  // Delete a payment and refresh the list
+Future<void> _deletePayment(String paymentId) async {
+  if (_authService.currentUser != null) {
+    await _db.deletePayment(_authService.currentUser!.uid, paymentId);
+    // Refresh data after deletion
+    setState(() {
+      _items = _getAllPayments();
+    });
   }
+}
 
-  // Delete a budget item
-  Future<void> _deleteBudget(String budgetId) async {
-    if (_authService.currentUser != null) {
-      await _db.deleteBudget(_authService.currentUser!.uid, budgetId);
-    }
+  // Delete a budget item and refresh the list
+Future<void> _deleteBudget(String budgetId) async {
+  if (_authService.currentUser != null) {
+    await _db.deleteBudget(_authService.currentUser!.uid, budgetId);
+    // Refresh data after deletion
+    setState(() {
+      _combinedData = _getCombinedData();
+    });
   }
+}
 
   @override
   Widget build(BuildContext context) {
