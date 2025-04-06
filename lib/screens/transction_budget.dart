@@ -71,7 +71,7 @@ class _TransctionBudgetState extends State<TransctionBudget> {
       method: paymentMethod,
       date: date,
       time: time,
-      amount: amountValue,
+      amount: amountValue, id: '',
     );
 
     // Add the payment to the database
@@ -103,7 +103,7 @@ class _TransctionBudgetState extends State<TransctionBudget> {
     }
 
     final budget = Budget(
-      id: 0,
+      id:'',
       category: category,
       amount: amountValue,
       startDate: startDate,
