@@ -1,9 +1,9 @@
 class Budget {
-  int id;
-  String category;
-  double amount;
-  String startDate;
-  String endDate;
+  final String id; // Changed from int to String for Firestore document ID
+  final String category;
+  final double amount;
+  final String startDate;
+  final String endDate;
 
   Budget({
     required this.id,
@@ -13,9 +13,9 @@ class Budget {
     required this.endDate,
   });
   
-  factory Budget.fromJson(Map<String, dynamic> json) {
+  factory Budget.fromJson(Map<String, dynamic> json, {String docId = ''}) {
     return Budget(
-      id: json['id'],
+      id: docId, // Use Firestore document ID
       category: json['category'],
       amount: json['amount'].toDouble(),
       startDate: json['start_date'],
@@ -25,7 +25,7 @@ class Budget {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      // Exclude id as Firestore manages the document ID
       'category': category,
       'amount': amount,
       'start_date': startDate,
