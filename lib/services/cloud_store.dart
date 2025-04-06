@@ -55,6 +55,21 @@ class FirestoreService {
             snapshot.docs.map((doc) => Budget.fromJson(doc.data())).toList());
   }
 
+  // Update a specific Payment
+  Future<void> updatePayment(
+      String uid, String paymentId, Payment payment) async {
+    try {
+      await _db
+          .collection('payment')
+          .doc(uid)
+          .collection('transactions')
+          .doc(paymentId)
+          .update(payment.toJson());
+    } catch (e) {
+      print("Error updating payment: $e");
+    }
+  }
+
   // Update a specific Budget item
   Future<void> updateBudget(String uid, String budgetId, Budget budget) async {
     try {
@@ -80,6 +95,20 @@ class FirestoreService {
           .delete();
     } catch (e) {
       print("Error deleting payment: $e");
+    }
+  }
+
+  // Delete a specific Budget
+  Future<void> deleteBudget(String uid, String budgetId) async {
+    try {
+      await _db
+          .collection('budget')
+          .doc(uid)
+          .collection('items')
+          .doc(budgetId)
+          .delete();
+    } catch (e) {
+      print("Error deleting budget: $e");
     }
   }
 }
