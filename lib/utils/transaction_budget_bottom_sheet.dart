@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:spend_wise/utils/border_button.dart';
 
 class TransactionBudgetBottomSheet extends StatefulWidget {
   final String title;
   final String category;
-  final Function(Map<String, String>)? onSubmit;
+  final Function(Map<String, String>) onSubmit;
 
   const TransactionBudgetBottomSheet({
     super.key,
     required this.title,
     required this.category,
-    this.onSubmit,
+    required this.onSubmit,
   });
 
   @override
@@ -21,11 +22,25 @@ class TransactionBudgetBottomSheet extends StatefulWidget {
 class _TransactionBudgetBottomSheetState
     extends State<TransactionBudgetBottomSheet> {
   final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _paymentMethodController =
-      TextEditingController();
+  final TextEditingController _paymentMethodController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _startDateController = TextEditingController();
+  final TextEditingController _endDateController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  bool get isTransaction => widget.title == 'Transaction';
+
+  @override
+  void initState() {
+    super.initState();
+    // Set default values
+    _dateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    _timeController.text = DateFormat('hh:mm a').format(DateTime.now());
+    _startDateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final nextMonth = DateTime.now().add(const Duration(days: 30));
+    _endDateController.text = DateFormat('yyyy-MM-dd').format(nextMonth);
+  }
 
   @override
   void dispose() {
@@ -34,18 +49,25 @@ class _TransactionBudgetBottomSheetState
     _dateController.dispose();
     _timeController.dispose();
     _startDateController.dispose();
+    _endDateController.dispose();
     super.dispose();
   }
 
   void _submit() {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     final data = {
       "amount": _amountController.text,
-      "paymentMethod": _paymentMethodController.text,
-      "date": _dateController.text,
-      "time": _timeController.text,
-      "startDate": _startDateController.text,
+      "paymentMethod": isTransaction ? _paymentMethodController.text : "",
+      "date": isTransaction ? _dateController.text : "",
+      "time": isTransaction ? _timeController.text : "",
+      "startDate": !isTransaction ? _startDateController.text : "",
+      "endDate": !isTransaction ? _endDateController.text : "",
     };
-    widget.onSubmit?.call(data);
+    
+    widget.onSubmit(data);
     Navigator.pop(context);
   }
 
@@ -58,144 +80,212 @@ class _TransactionBudgetBottomSheetState
         top: 16,
         bottom: MediaQuery.of(context).viewInsets.bottom + 16,
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "${widget.title} - ${widget.category}",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
+      child: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "${widget.title} - ${widget.category}",
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
 
-            // Amount & Payment Method
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _amountController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: "Amount",
-                      border: OutlineInputBorder(),
+              // Amount & Payment Method
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _amountController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: "Amount",
+                        border: OutlineInputBorder(),
+                        prefixText: "\$ ",
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter an amount';
+                        }
+                        if (double.tryParse(value) == null) {
+                          return 'Please enter a valid number';
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: widget.title == 'Transaction'
-                      ? TextField(
-                          controller: _paymentMethodController,
-                          decoration: const InputDecoration(
-                            labelText: "Payment Method",
-                            border: OutlineInputBorder(),
-                          ),
-                        )
-                      : const SizedBox(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-
-            // Date & Time or Start Date
-            Row(
-              children: [
-                Expanded(
-                  child: widget.title == 'Transaction'
-                      ? TextField(
-                          controller: _dateController,
-                          readOnly: true,
-                          decoration: const InputDecoration(
-                            labelText: "Date",
-                            border: OutlineInputBorder(),
-                          ),
-                          onTap: () async {
-                            DateTime? picked = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2100),
-                            );
-                            if (picked != null) {
-                              String formattedDate =
-                                  DateFormat('yyyy-MM-dd').format(picked);
-                              setState(() {
-                                _dateController.text = formattedDate;
-                              });
-                            }
-                          },
-                        )
-                      : TextField(
-                          controller: _startDateController,
-                          readOnly: true,
-                          decoration: const InputDecoration(
-                            labelText: "Start Date",
-                            border: OutlineInputBorder(),
-                          ),
-                          onTap: () async {
-                            DateTime? picked = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2100),
-                            );
-                            if (picked != null) {
-                              String formattedDate =
-                                  DateFormat('yyyy-MM-dd').format(picked);
-                              setState(() {
-                                _startDateController.text = formattedDate;
-                              });
-                            }
-                          },
-                        ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: widget.title == 'Transaction'
-                      ? TextField(
-                          controller: _timeController,
-                          readOnly: true,
-                          decoration: const InputDecoration(
-                            labelText: "Time",
-                            border: OutlineInputBorder(),
-                          ),
-                          onTap: () async {
-                            TimeOfDay? time = await showTimePicker(
-                              context: context,
-                              initialTime: TimeOfDay.now(),
-                            );
-                            if (time != null) {
-                              String formattedTime =
-                                  DateFormat('hh:mm a').format(DateTime(
-                                0,
-                                0,
-                                0,
-                                time.hour,
-                                time.minute,
-                              ));
-                              setState(() {
-                                _timeController.text = formattedTime;
-                              });
-                            }
-                          },
-                        )
-                      : const SizedBox(),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 20),
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                onPressed: _submit,
-                child: Text("Submit ${widget.title}"),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: isTransaction
+                        ? TextFormField(
+                            controller: _paymentMethodController,
+                            decoration: const InputDecoration(
+                              labelText: "Payment Method",
+                              border: OutlineInputBorder(),
+                              hintText: "Cash, Card, etc.",
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter payment method';
+                              }
+                              return null;
+                            },
+                          )
+                        : const SizedBox(),
+                  ),
+                ],
               ),
-            ),
-          ],
+              const SizedBox(height: 16),
+
+              // Date & Time or Start Date
+              Row(
+                children: [
+                  Expanded(
+                    child: isTransaction
+                        ? _buildDatePicker(
+                            controller: _dateController,
+                            labelText: "Date",
+                            isRequired: true,
+                          )
+                        : _buildDatePicker(
+                            controller: _startDateController,
+                            labelText: "Start Date",
+                            isRequired: true,
+                          ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: isTransaction
+                        ? _buildTimePicker(
+                            controller: _timeController,
+                            labelText: "Time",
+                            isRequired: true,
+                          )
+                        : _buildDatePicker(
+                            controller: _endDateController,
+                            labelText: "End Date",
+                            isRequired: true,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select end date';
+                              }
+                              
+                              final startDate = DateTime.parse(_startDateController.text);
+                              final endDate = DateTime.parse(value);
+                              
+                              if (endDate.isBefore(startDate)) {
+                                return 'End date must be after start date';
+                              }
+                              return null;
+                            },
+                          ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              
+              SizedBox(
+                width: double.infinity,
+                child: BorderButton(
+                  text: "Save ${widget.title}",
+                  onPressed: _submit,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildDatePicker({
+    required TextEditingController controller,
+    required String labelText,
+    bool isRequired = false,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      readOnly: true,
+      decoration: InputDecoration(
+        labelText: labelText,
+        border: const OutlineInputBorder(),
+        suffixIcon: const Icon(Icons.calendar_today),
+      ),
+      validator: validator ?? (value) {
+        if (isRequired && (value == null || value.isEmpty)) {
+          return 'Please select a date';
+        }
+        return null;
+      },
+      onTap: () async {
+        DateTime? picked = await showDatePicker(
+          context: context,
+          initialDate: controller.text.isNotEmpty
+              ? DateTime.parse(controller.text)
+              : DateTime.now(),
+          firstDate: DateTime(2000),
+          lastDate: DateTime(2100),
+        );
+        if (picked != null) {
+          setState(() {
+            controller.text = DateFormat('yyyy-MM-dd').format(picked);
+          });
+        }
+      },
+    );
+  }
+
+  Widget _buildTimePicker({
+    required TextEditingController controller,
+    required String labelText,
+    bool isRequired = false,
+  }) {
+    return TextFormField(
+      controller: controller,
+      readOnly: true,
+      decoration: InputDecoration(
+        labelText: labelText,
+        border: const OutlineInputBorder(),
+        suffixIcon: const Icon(Icons.access_time),
+      ),
+      validator: (value) {
+        if (isRequired && (value == null || value.isEmpty)) {
+          return 'Please select a time';
+        }
+        return null;
+      },
+      onTap: () async {
+        TimeOfDay? picked = await showTimePicker(
+          context: context,
+          initialTime: controller.text.isNotEmpty
+              ? TimeOfDay.fromDateTime(
+                  DateFormat('hh:mm a').parse(controller.text))
+              : TimeOfDay.now(),
+        );
+        if (picked != null) {
+          setState(() {
+            controller.text = DateFormat('hh:mm a').format(DateTime(
+              0,
+              0,
+              0,
+              picked.hour,
+              picked.minute,
+            ));
+          });
+        }
+      },
     );
   }
 }
