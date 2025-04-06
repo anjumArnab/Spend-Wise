@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:spend_wise/models/budget.dart';
+import 'package:spend_wise/models/payment.dart';
 import 'package:spend_wise/services/authentication.dart';
 import 'package:spend_wise/services/cloud_store.dart';
 import 'package:spend_wise/utils/budget_progress.dart';
@@ -52,24 +54,52 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
   Future<Map<String, dynamic>> _getCombinedData() async {
     final budgetsData = await _getAllBudgets();
     final paymentsData = await _getAllPayments();
-    
+
     return {
       'budgets': budgetsData,
       'payments': paymentsData,
     };
   }
 
+  // Update a payment
+  Future<void> _updatePayment(String paymentId, Payment payment) async {
+    if (_authService.currentUser != null) {
+      await _db.updatePayment(
+          _authService.currentUser!.uid, paymentId, payment);
+    }
+  }
+
+  // Update a budget item
+  Future<void> _updateBudget(String budgetId, Budget budget) async {
+    if (_authService.currentUser != null) {
+      await _db.updateBudget(_authService.currentUser!.uid, budgetId, budget);
+    }
+  }
+
+  // Delete a payment
+  Future<void> _deletePayment(String paymentId) async {
+    if (_authService.currentUser != null) {
+      await _db.deletePayment(_authService.currentUser!.uid, paymentId);
+    }
+  }
+
+  // Delete a budget item
+  Future<void> _deleteBudget(String budgetId) async {
+    if (_authService.currentUser != null) {
+      await _db.deleteBudget(_authService.currentUser!.uid, budgetId);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: widget.type == 'Transaction'
-            ? const Text('Transactions')
-            : const Text('Budgets')
-      ),
+          title: widget.type == 'Transaction'
+              ? const Text('Transactions')
+              : const Text('Budgets')),
       body: Padding(
         padding: const EdgeInsets.all(12),
-        child: widget.type == 'Transaction' 
+        child: widget.type == 'Transaction'
             ? _buildTransactionsList()
             : _buildBudgetsList(),
       ),
@@ -93,12 +123,15 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
             itemCount: transactions.length,
             itemBuilder: (context, index) {
               var payment = transactions[index];
-              return TransactionItem(
-                category: payment.category,
-                method: payment.method,
-                date: payment.date,
-                time: payment.time,
-                amount: payment.amount,
+              return GestureDetector(
+                onLongPress: () => _deletePayment(payment.id),
+                child: TransactionItem(
+                  category: payment.category,
+                  method: payment.method,
+                  date: payment.date,
+                  time: payment.time,
+                  amount: payment.amount,
+                ),
               );
             },
           );
@@ -116,18 +149,18 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return const Center(child: Text('Error fetching data'));
-        } else if (!snapshot.hasData || 
-                  (snapshot.data!['budgets'] as List).isEmpty) {
+        } else if (!snapshot.hasData ||
+            (snapshot.data!['budgets'] as List).isEmpty) {
           return const Center(child: Text('No budgets available'));
         } else {
           List<dynamic> budgets = snapshot.data!['budgets'];
           List<dynamic> payments = snapshot.data!['payments'];
-          
+
           return ListView.builder(
             itemCount: budgets.length,
             itemBuilder: (context, index) {
               var budget = budgets[index];
-              
+
               // Calculate progress by matching payments with budget category
               double totalSpent = 0;
               for (var payment in payments) {
@@ -135,17 +168,22 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
                   totalSpent += payment.amount;
                 }
               }
-              
+
               // Calculate progress as a ratio of spent amount to budget amount
-              double progress = budget.amount > 0 ? totalSpent / budget.amount : 0;
-              progress = progress.clamp(0.0, 1.0); // Ensure it is between 0 and 1
-              
-              return BudgetProgress(
-                category: budget.category,
-                startDate: budget.startDate,
-                endDate: budget.endDate,
-                amount: budget.amount,
-                progress: progress,
+              double progress =
+                  budget.amount > 0 ? totalSpent / budget.amount : 0;
+              progress =
+                  progress.clamp(0.0, 1.0); // Ensure it is between 0 and 1
+
+              return GestureDetector(
+                onLongPress: () => _deleteBudget(budget.id),
+                child: BudgetProgress(
+                  category: budget.category,
+                  startDate: budget.startDate,
+                  endDate: budget.endDate,
+                  amount: budget.amount,
+                  progress: progress,
+                ),
               );
             },
           );
