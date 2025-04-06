@@ -326,7 +326,6 @@ class _TransctionBudgetState extends State<TransctionBudget> {
                   ],
                 ),
                 const SizedBox(height: 10),
-
                 BorderButton(
                   text: "Add",
                   onPressed: widget.title == 'Transaction'
