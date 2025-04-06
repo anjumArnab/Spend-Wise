@@ -16,6 +16,7 @@ class FirestoreService {
       await paymentRef.set(payment.toJson());
     } catch (e) {
       print("Error adding payment: $e");
+      rethrow; // Rethrow so UI can handle the error
     }
   }
 
@@ -30,10 +31,11 @@ class FirestoreService {
       await budgetRef.set(budget.toJson());
     } catch (e) {
       print("Error adding budget: $e");
+      rethrow; // Rethrow so UI can handle the error
     }
   }
 
-  // Get all Payments by user
+  // Get all Payments by user (now includes document ID in each Payment object)
   Stream<List<Payment>> getPayments(String uid) {
     return _db
         .collection('payment')
@@ -41,10 +43,12 @@ class FirestoreService {
         .collection('transactions')
         .snapshots()
         .map((snapshot) =>
-            snapshot.docs.map((doc) => Payment.fromJson(doc.data())).toList());
+            snapshot.docs.map((doc) => 
+              Payment.fromJson(doc.data(), docId: doc.id)
+            ).toList());
   }
 
-  // Get all Budgets by user
+  // Get all Budgets by user (now includes document ID in each Budget object)
   Stream<List<Budget>> getBudgets(String uid) {
     return _db
         .collection('budget')
@@ -52,7 +56,9 @@ class FirestoreService {
         .collection('items')
         .snapshots()
         .map((snapshot) =>
-            snapshot.docs.map((doc) => Budget.fromJson(doc.data())).toList());
+            snapshot.docs.map((doc) => 
+              Budget.fromJson(doc.data(), docId: doc.id)
+            ).toList());
   }
 
   // Update a specific Payment
@@ -67,6 +73,7 @@ class FirestoreService {
           .update(payment.toJson());
     } catch (e) {
       print("Error updating payment: $e");
+      rethrow; // Rethrow so UI can handle the error
     }
   }
 
@@ -81,6 +88,7 @@ class FirestoreService {
           .update(budget.toJson());
     } catch (e) {
       print("Error updating budget: $e");
+      rethrow; // Rethrow so UI can handle the error
     }
   }
 
@@ -95,6 +103,7 @@ class FirestoreService {
           .delete();
     } catch (e) {
       print("Error deleting payment: $e");
+      rethrow; // Rethrow so UI can handle the error
     }
   }
 
@@ -109,6 +118,7 @@ class FirestoreService {
           .delete();
     } catch (e) {
       print("Error deleting budget: $e");
+      rethrow; // Rethrow so UI can handle the error
     }
   }
 }
