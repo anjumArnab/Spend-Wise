@@ -14,6 +14,27 @@ class TransactionBudgetBottomSheet extends StatefulWidget {
     required this.onSubmit,
   });
 
+  /// Static method to show this bottom sheet as a modal
+  static Future<void> show({
+    required BuildContext context,
+    required String title,
+    required String category,
+    required Function(Map<String, String>) onSubmit,
+  }) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => TransactionBudgetBottomSheet(
+        title: title,
+        category: category,
+        onSubmit: onSubmit,
+      ),
+    );
+  }
+
   @override
   State<TransactionBudgetBottomSheet> createState() =>
       _TransactionBudgetBottomSheetState();
@@ -22,7 +43,8 @@ class TransactionBudgetBottomSheet extends StatefulWidget {
 class _TransactionBudgetBottomSheetState
     extends State<TransactionBudgetBottomSheet> {
   final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _paymentMethodController = TextEditingController();
+  final TextEditingController _paymentMethodController =
+      TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _startDateController = TextEditingController();
@@ -66,14 +88,18 @@ class _TransactionBudgetBottomSheetState
       "startDate": !isTransaction ? _startDateController.text : "",
       "endDate": !isTransaction ? _endDateController.text : "",
     };
-    
+
     widget.onSubmit(data);
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
       padding: EdgeInsets.only(
         left: 16,
         right: 16,
@@ -92,7 +118,8 @@ class _TransactionBudgetBottomSheetState
                 children: [
                   Text(
                     "${widget.title} - ${widget.category}",
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   IconButton(
                     icon: const Icon(Icons.close),
@@ -180,10 +207,11 @@ class _TransactionBudgetBottomSheetState
                               if (value == null || value.isEmpty) {
                                 return 'Please select end date';
                               }
-                              
-                              final startDate = DateTime.parse(_startDateController.text);
+
+                              final startDate =
+                                  DateTime.parse(_startDateController.text);
                               final endDate = DateTime.parse(value);
-                              
+
                               if (endDate.isBefore(startDate)) {
                                 return 'End date must be after start date';
                               }
@@ -194,7 +222,7 @@ class _TransactionBudgetBottomSheetState
                 ],
               ),
               const SizedBox(height: 24),
-              
+
               SizedBox(
                 width: double.infinity,
                 child: BorderButton(
@@ -223,12 +251,13 @@ class _TransactionBudgetBottomSheetState
         border: const OutlineInputBorder(),
         suffixIcon: const Icon(Icons.calendar_today),
       ),
-      validator: validator ?? (value) {
-        if (isRequired && (value == null || value.isEmpty)) {
-          return 'Please select a date';
-        }
-        return null;
-      },
+      validator: validator ??
+          (value) {
+            if (isRequired && (value == null || value.isEmpty)) {
+              return 'Please select a date';
+            }
+            return null;
+          },
       onTap: () async {
         DateTime? picked = await showDatePicker(
           context: context,
@@ -282,7 +311,7 @@ class _TransactionBudgetBottomSheetState
               0,
               picked.hour,
               picked.minute,
-            ));
+            ),);
           });
         }
       },
