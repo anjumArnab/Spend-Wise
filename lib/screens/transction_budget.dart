@@ -59,12 +59,12 @@ class _TransctionBudgetState extends State<TransctionBudget> {
 
     // Create the Payment object with the explicitly passed category
     final payment = Payment(
+      id: '',
       category: category,
+      amount: amountValue,
       method: paymentMethod,
       date: date,
       time: time,
-      amount: amountValue,
-      id: '',
     );
 
     // Add the payment to the database

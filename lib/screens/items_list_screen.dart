@@ -4,6 +4,7 @@ import 'package:spend_wise/models/payment.dart';
 import 'package:spend_wise/services/authentication.dart';
 import 'package:spend_wise/services/cloud_store.dart';
 import 'package:spend_wise/utils/budget_progress.dart';
+import 'package:spend_wise/utils/transaction_budget_bottom_sheet.dart';
 import 'package:spend_wise/utils/transaction_item.dart';
 
 class ItemsListScreen extends StatefulWidget {
@@ -77,26 +78,26 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
   }
 
   // Delete a payment and refresh the list
-Future<void> _deletePayment(String paymentId) async {
-  if (_authService.currentUser != null) {
-    await _db.deletePayment(_authService.currentUser!.uid, paymentId);
-    // Refresh data after deletion
-    setState(() {
-      _items = _getAllPayments();
-    });
+  Future<void> _deletePayment(String paymentId) async {
+    if (_authService.currentUser != null) {
+      await _db.deletePayment(_authService.currentUser!.uid, paymentId);
+      // Refresh data after deletion
+      setState(() {
+        _items = _getAllPayments();
+      });
+    }
   }
-}
 
   // Delete a budget item and refresh the list
-Future<void> _deleteBudget(String budgetId) async {
-  if (_authService.currentUser != null) {
-    await _db.deleteBudget(_authService.currentUser!.uid, budgetId);
-    // Refresh data after deletion
-    setState(() {
-      _combinedData = _getCombinedData();
-    });
+  Future<void> _deleteBudget(String budgetId) async {
+    if (_authService.currentUser != null) {
+      await _db.deleteBudget(_authService.currentUser!.uid, budgetId);
+      // Refresh data after deletion
+      setState(() {
+        _combinedData = _getCombinedData();
+      });
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -133,6 +134,30 @@ Future<void> _deleteBudget(String budgetId) async {
               var payment = transactions[index];
               return GestureDetector(
                 onLongPress: () => _deletePayment(payment.id),
+                onTap: () => TransactionBudgetBottomSheet.updatePayment(
+                  context: context,
+                  title: widget.type,
+                  category: payment.category,
+                  onSubmit: (data) {
+                    // Convert data to Payment object
+                    final updatedPayment = Payment(
+                      id: payment.id,
+                      category: payment.category,
+                      amount: double.parse(data['amount'] ?? ''),
+                      method: data['paymentMethod'] ?? '',
+                      date: data['date'] ?? '',
+                      time: data['time'] ?? '',
+                    );
+                    
+                    // Update payment in database
+                    _updatePayment(payment.id, updatedPayment);
+                    
+                    // Refresh data
+                    setState(() {
+                      _items = _getAllPayments();
+                    });
+                  },
+                ),
                 child: TransactionItem(
                   category: payment.category,
                   method: payment.method,
@@ -185,6 +210,29 @@ Future<void> _deleteBudget(String budgetId) async {
 
               return GestureDetector(
                 onLongPress: () => _deleteBudget(budget.id),
+                onTap: () => TransactionBudgetBottomSheet.updateBudget(
+                  context: context,
+                  title: widget.type,
+                  category: budget.category,
+                  onSubmit: (data) {
+                    // Convert data to Budget object
+                    final updatedBudget = Budget(
+                      id: budget.id,
+                      category: budget.category,
+                      amount: double.parse(data['amount'] ?? ''),
+                      startDate: data['startDate'] ?? '',
+                      endDate: data['endDate'] ?? '',
+                    );
+                    
+                    // Update budget in database
+                    _updateBudget(budget.id, updatedBudget);
+                    
+                    // Refresh data
+                    setState(() {
+                      _combinedData = _getCombinedData();
+                    });
+                  },
+                ),
                 child: BudgetProgress(
                   category: budget.category,
                   startDate: budget.startDate,

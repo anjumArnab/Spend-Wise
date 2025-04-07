@@ -25,7 +25,7 @@ class TransactionBudgetBottomSheet extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(3)),
       ),
       builder: (context) => TransactionBudgetBottomSheet(
         title: title,
@@ -34,6 +34,47 @@ class TransactionBudgetBottomSheet extends StatefulWidget {
       ),
     );
   }
+
+  static Future<void> updatePayment({
+    required BuildContext context,
+    required String title,
+    required String category,
+    required Function(Map<String, String>) onSubmit,
+  }) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(3)),
+      ),
+      builder: (context) => TransactionBudgetBottomSheet(
+        title: title,
+        category: category,
+        onSubmit: onSubmit,
+      ),
+    );
+  }
+
+  static Future<void> updateBudget({
+    required BuildContext context,
+    required String title,
+    required String category,
+    required Function(Map<String, String>) onSubmit,
+  }) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(3)),
+      ),
+      builder: (context) => TransactionBudgetBottomSheet(
+        title: title,
+        category: category,
+        onSubmit: onSubmit,
+      ),
+    );
+  }
+  
 
   @override
   State<TransactionBudgetBottomSheet> createState() =>
