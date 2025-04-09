@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:spend_wise/models/budget.dart';
 import 'package:spend_wise/models/payment.dart';
+import 'package:spend_wise/models/user.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -118,6 +120,44 @@ class FirestoreService {
           .delete();
     } catch (e) {
       print("Error deleting budget: $e");
+      rethrow; // Rethrow so UI can handle the error
+    }
+  }
+
+  /// [User]
+  late final CollectionReference userCollection = _db.collection('users');
+
+  /// Add a new user to the Firestore database
+  Future<void> saveUserData(UserModel user, String uid) async {
+    try {
+      await userCollection.doc(uid).set(user.toMap());
+    } catch (e) {
+      print("Error saving user data: $e");
+      rethrow; // Rethrow so UI can handle the error
+    }
+  }
+
+  /// Get user data from Firestore
+  Future<UserModel?> getUserData(String uid) async {
+    try {
+      final doc = await userCollection.doc(uid).get();
+      if (doc.exists) {
+        return UserModel.fromMap(doc.data() as Map<String, dynamic>);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("Error fetching user data: $e");
+      rethrow; // Rethrow so UI can handle the error
+    }
+  }
+
+  /// Update user data in Firestore
+  Future<void> updateUserData(String uid, UserModel user) async {
+    try {
+      await userCollection.doc(uid).update(user.toMap());
+    } catch (e) {
+      print("Error updating user data: $e");
       rethrow; // Rethrow so UI can handle the error
     }
   }
