@@ -1,4 +1,4 @@
-class User {
+class UserModel {
   final String uid;
   final String email;
   final String fullName;
@@ -7,7 +7,7 @@ class User {
   final String preferredLanguage;
 
   
-  User({
+  UserModel({
     required this.uid,
     required this.email,
     required this.fullName,
@@ -30,8 +30,8 @@ class User {
   }
   
   // Create UserModel from Map
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
       uid: map['uid'],
       email: map['email'],
       fullName: map['fullName'] ?? '',
