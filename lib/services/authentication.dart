@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:spend_wise/utils/show_snack_bar.dart';
+import 'package:spend_wise/widgets/show_snack_bar.dart';
 
 /// A service class that handles Firebase Authentication operations.
 class FirebaseAuthService {

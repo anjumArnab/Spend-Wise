@@ -3,7 +3,7 @@ import 'package:spend_wise/models/budget.dart';
 import 'package:spend_wise/models/payment.dart';
 import 'package:spend_wise/services/authentication.dart';
 import 'package:spend_wise/services/cloud_store.dart';
-import 'package:spend_wise/utils/transaction_budget_bottom_sheet.dart';
+import 'package:spend_wise/widgets/transaction_budget_bottom_sheet.dart';
 
 class TransctionBudget extends StatefulWidget {
   final String title;

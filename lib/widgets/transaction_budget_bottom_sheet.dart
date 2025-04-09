@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:spend_wise/utils/border_button.dart';
+import 'package:spend_wise/widgets/border_button.dart';
 
 class TransactionBudgetBottomSheet extends StatefulWidget {
   final String title;

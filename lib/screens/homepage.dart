@@ -5,8 +5,8 @@ import 'package:spend_wise/screens/drawer.dart';
 import 'package:spend_wise/screens/sign_up_screen.dart';
 import 'package:spend_wise/services/authentication.dart';
 import 'package:spend_wise/services/cloud_store.dart';
-import 'package:spend_wise/utils/transaction_item.dart';
-import 'package:spend_wise/utils/budget_progress.dart';
+import 'package:spend_wise/widgets/transaction_item.dart';
+import 'package:spend_wise/widgets/budget_progress.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

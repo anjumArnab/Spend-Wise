@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:spend_wise/screens/homepage.dart';
 import 'package:spend_wise/services/authentication.dart';
-import 'package:spend_wise/utils/border_button.dart';
-import 'package:spend_wise/utils/show_snack_bar.dart';
-import 'package:spend_wise/utils/text_field.dart';
+import 'package:spend_wise/widgets/border_button.dart';
+import 'package:spend_wise/widgets/show_snack_bar.dart';
+import 'package:spend_wise/widgets/text_field.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});

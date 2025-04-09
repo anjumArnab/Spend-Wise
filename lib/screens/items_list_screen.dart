@@ -3,9 +3,9 @@ import 'package:spend_wise/models/budget.dart';
 import 'package:spend_wise/models/payment.dart';
 import 'package:spend_wise/services/authentication.dart';
 import 'package:spend_wise/services/cloud_store.dart';
-import 'package:spend_wise/utils/budget_progress.dart';
-import 'package:spend_wise/utils/transaction_budget_bottom_sheet.dart';
-import 'package:spend_wise/utils/transaction_item.dart';
+import 'package:spend_wise/widgets/budget_progress.dart';
+import 'package:spend_wise/widgets/transaction_budget_bottom_sheet.dart';
+import 'package:spend_wise/widgets/transaction_item.dart';
 
 class ItemsListScreen extends StatefulWidget {
   final String type; // 'Transaction' or 'Budget'
