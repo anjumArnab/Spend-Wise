@@ -7,6 +7,7 @@ class CustomDrawer extends StatelessWidget {
   final VoidCallback onLogIn;
   final bool isBackupEnabled;
   final ValueChanged<bool> onBackupToggle;
+  final VoidCallback navToUserDetails;
   final VoidCallback onLogout;
   final VoidCallback onExit;
 
@@ -18,6 +19,7 @@ class CustomDrawer extends StatelessWidget {
     required this.onLogIn,
     required this.isBackupEnabled,
     required this.onBackupToggle,
+    required this.navToUserDetails,
     required this.onLogout,
     required this.onExit,
   });
@@ -28,15 +30,18 @@ class CustomDrawer extends StatelessWidget {
       child: Column(
         children: [
           // Header Section with User Profile
-          UserAccountsDrawerHeader(
-            accountName: Text(username, style: const TextStyle(color: Colors.black),),
-            accountEmail: Text(email, style:const TextStyle(color: Colors.black)),
-            currentAccountPicture: CircleAvatar(
-              backgroundImage: NetworkImage(
-                  profilePictureUrl), // Replace with user's profile picture URL
-            ),
-            decoration: const BoxDecoration(
-              color: Colors.white// Set background color
+          GestureDetector(
+            onTap: navToUserDetails,
+            child: UserAccountsDrawerHeader(
+              accountName: Text(username, style: const TextStyle(color: Colors.black),),
+              accountEmail: Text(email, style:const TextStyle(color: Colors.black)),
+              currentAccountPicture: CircleAvatar(
+                backgroundImage: NetworkImage(
+                    profilePictureUrl), // Replace with user's profile picture URL
+              ),
+              decoration: const BoxDecoration(
+                color: Colors.white// Set background color
+              ),
             ),
           ),
           ListTile(
