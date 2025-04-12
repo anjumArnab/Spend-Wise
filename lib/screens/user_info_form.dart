@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spend_wise/models/user.dart';
+import 'package:spend_wise/screens/homepage.dart';
 import 'package:spend_wise/services/authentication.dart';
 import 'package:spend_wise/services/cloud_store.dart';
 import 'package:spend_wise/widgets/border_button.dart';
@@ -62,6 +63,14 @@ class _UserInfoFormState extends State<UserInfoForm> {
     );
   }
 
+  void _navToHomePage(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const HomePage(),
+      ),
+    );
+  }
   // Function to save user information
 
   Future<void> _saveUserInfo() async {
@@ -89,6 +98,7 @@ class _UserInfoFormState extends State<UserInfoForm> {
       );
 
       await _db.saveUserData(user, _authService.currentUser!.uid);
+      _navToHomePage(context);
     } catch (e) {
       showSnackBar(context, 'Error saving user data: ${e.toString()}');
     } finally {
