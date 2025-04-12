@@ -3,7 +3,7 @@ import 'package:spend_wise/screens/items_list_screen.dart';
 import 'package:spend_wise/screens/Transction_budget.dart';
 import 'package:spend_wise/screens/drawer.dart';
 import 'package:spend_wise/screens/sign_up_screen.dart';
-import 'package:spend_wise/screens/user_details.dart';
+import 'package:spend_wise/screens/user_profile.dart';
 import 'package:spend_wise/services/authentication.dart';
 import 'package:spend_wise/services/cloud_store.dart';
 import 'package:spend_wise/widgets/transaction_item.dart';
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
   void _navToUserDetails(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const UserDetailsPage()),
+      MaterialPageRoute(builder: (context) => const UserProfilePage()),
     );
   }
 
