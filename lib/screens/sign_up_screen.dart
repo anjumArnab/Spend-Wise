@@ -240,9 +240,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget buildToggleButton(String text, bool isSignUp) {
-    return BorderButton(
-      text: text,
-      onPressed: () => setState(() => _isSignUp = isSignUp),
+    // Check if this button matches the current selection state
+    bool isSelected = _isSignUp == isSignUp;
+    
+    return InkWell(
+      onTap: () => setState(() => _isSignUp = isSignUp),
+      child: Container(
+        height: 45,
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.black : Colors.transparent,
+          border: Border.all(color: Colors.black, width: 1.5),
+          borderRadius: BorderRadius.circular(7),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: isSelected ? Colors.white : Colors.black,
+          ),
+        ),
+      ),
     );
   }
 }

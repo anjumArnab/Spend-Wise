@@ -19,7 +19,7 @@ class BorderButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(double.infinity, 50),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(3),
+          borderRadius: BorderRadius.circular(7),
           side: const BorderSide(color: Colors.black),
         ),
         elevation: 0,

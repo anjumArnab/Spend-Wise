@@ -5,25 +5,25 @@ class CustomDrawer extends StatelessWidget {
   final String? profilePictureUrl;
   final VoidCallback navToUserDetails;
   final VoidCallback onLogIn;
-  final bool isLoggedIn; // New parameter to track authentication state
+  final bool isLoggedIn; // Parameter to track authentication state
   final bool isBackupEnabled;
   final Function(bool) onBackupToggle;
   final VoidCallback onLogout;
   final VoidCallback onExit;
 
   const CustomDrawer({
-    Key? key,
+    super.key,
     this.username,
     this.email,
     this.profilePictureUrl,
     required this.navToUserDetails,
     required this.onLogIn,
-    required this.isLoggedIn, // Add this parameter
+    required this.isLoggedIn,
     required this.isBackupEnabled,
     required this.onBackupToggle,
     required this.onLogout,
     required this.onExit,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,14 +39,14 @@ class CustomDrawer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CircleAvatar(
-                  radius: 30,
+                  radius: 35,
                   backgroundImage: profilePictureUrl != null && profilePictureUrl!.isNotEmpty 
                       ? NetworkImage(profilePictureUrl!) as ImageProvider
                       : const AssetImage("assets/images/annie.jpg"),
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  username ?? "Guest User",
+                  username ?? "",
                   style: const TextStyle(color: Colors.white, fontSize: 16),
                 ),
                 Text(

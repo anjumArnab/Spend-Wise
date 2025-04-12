@@ -89,8 +89,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
     }
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,7 +99,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
             icon: const Icon(Icons.edit_outlined),
             onPressed: () => _navToEditProfile(context),
           ),
-          
           const SizedBox(width: 15),
         ],
       ),

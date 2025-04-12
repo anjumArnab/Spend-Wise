@@ -22,7 +22,7 @@ class BudgetProgress extends StatelessWidget {
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black),
-        borderRadius: BorderRadius.circular(3),
+        borderRadius: BorderRadius.circular(7),
       ),
       margin: const EdgeInsets.only(bottom: 3), // Reduced margin
       child: Column(
@@ -44,7 +44,7 @@ class BudgetProgress extends StatelessWidget {
                     value: progress,
                     backgroundColor: Colors.grey[300],
                     valueColor: const AlwaysStoppedAnimation<Color>(Colors.black),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(7),
                   ),
                 ),
               ],

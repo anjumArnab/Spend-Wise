@@ -22,7 +22,7 @@ class TransactionItem extends StatelessWidget {
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black),
-        borderRadius: BorderRadius.circular(3),
+        borderRadius: BorderRadius.circular(7),
       ),
       margin: const EdgeInsets.only(bottom: 3), // Reduced margin
       child: ListTile(

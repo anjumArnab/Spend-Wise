@@ -25,7 +25,7 @@ class TransactionBudgetBottomSheet extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(3)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(7)),
       ),
       builder: (context) => TransactionBudgetBottomSheet(
         title: title,
