@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spend_wise/screens/homepage.dart';
+import 'package:spend_wise/screens/user_info_form.dart';
 import 'package:spend_wise/services/authentication.dart';
 import 'package:spend_wise/widgets/border_button.dart';
 import 'package:spend_wise/widgets/show_snack_bar.dart';
@@ -37,8 +38,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
-  void _navToHomePage(BuildContext context) {
+  void  _navToUserInfoForm(BuildContext context) {
     Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const UserInfoForm(),
+      ),
+    );
+  }
+
+  void _navToHomePage(BuildContext context) {
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => const HomePage(),
@@ -87,7 +97,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         final emailSent = await _authService.sendEmailVerification(context);
 
         if (emailSent && mounted) {
-          _navToHomePage(context);
+         // _navToHomePage(context);
+         _navToUserInfoForm(context);
         }
       }
     } catch (e) {
