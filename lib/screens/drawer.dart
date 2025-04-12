@@ -30,20 +30,25 @@ class CustomDrawer extends StatelessWidget {
       child: Column(
         children: [
           // Header Section with User Profile
-          GestureDetector(
-            onTap: navToUserDetails,
-            child: UserAccountsDrawerHeader(
-              accountName: Text(username, style: const TextStyle(color: Colors.black),),
-              accountEmail: Text(email, style:const TextStyle(color: Colors.black)),
-              currentAccountPicture: CircleAvatar(
+          UserAccountsDrawerHeader(
+            accountName: Text(
+              username,
+              style: const TextStyle(color: Colors.black),
+            ),
+            accountEmail:
+                Text(email, style: const TextStyle(color: Colors.black)),
+            currentAccountPicture: GestureDetector(
+              onTap: navToUserDetails,
+              child: CircleAvatar(
                 backgroundImage: NetworkImage(
                     profilePictureUrl), // Replace with user's profile picture URL
               ),
-              decoration: const BoxDecoration(
-                color: Colors.white// Set background color
-              ),
             ),
+            decoration:
+                const BoxDecoration(color: Colors.white // Set background color
+                    ),
           ),
+
           ListTile(
             leading: const Icon(Icons.login_outlined, color: Colors.black),
             title: const Text('Log In'),
