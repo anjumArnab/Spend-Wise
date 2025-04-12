@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:spend_wise/models/user.dart';
 import 'package:spend_wise/screens/reset_password_page.dart';
 import 'package:spend_wise/screens/sign_up_screen.dart';
+import 'package:spend_wise/screens/user_info_form.dart';
 import 'package:spend_wise/services/authentication.dart';
 import 'package:spend_wise/services/cloud_store.dart';
 import 'package:spend_wise/widgets/border_button.dart';
@@ -53,6 +54,18 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
+  void _navToEditProfile(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UserInfoForm(userData: _userData),
+      ),
+    ).then((_) {
+      // Refresh the user data when returning from UserInfoForm
+      _getUserData();
+    });
+  }
+
   Future<void> _getUserData() async {
     if (_authService.currentUser != null) {
       _userData = await _db.getUserData(_authService.currentUser!.uid);
@@ -76,6 +89,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
     }
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,14 +98,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
         title: const Text('User Profile'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {},
+            icon: const Icon(Icons.edit_outlined),
+            onPressed: () => _navToEditProfile(context),
           ),
-          const SizedBox(width: 10),
-          IconButton(
-            icon: const Icon(Icons.logout_outlined),
-            onPressed: () {},
-          ),
+          
           const SizedBox(width: 15),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spend_wise/models/user.dart';
 import 'package:spend_wise/screens/items_list_screen.dart';
 import 'package:spend_wise/screens/Transction_budget.dart';
 import 'package:spend_wise/screens/drawer.dart';
@@ -6,6 +7,7 @@ import 'package:spend_wise/screens/sign_up_screen.dart';
 import 'package:spend_wise/screens/user_profile.dart';
 import 'package:spend_wise/services/authentication.dart';
 import 'package:spend_wise/services/cloud_store.dart';
+import 'package:spend_wise/widgets/show_snack_bar.dart';
 import 'package:spend_wise/widgets/transaction_item.dart';
 import 'package:spend_wise/widgets/budget_progress.dart';
 
@@ -21,6 +23,8 @@ class _HomePageState extends State<HomePage> {
   String _selectedCategory = 'Transaction'; // Default selection
   final FirebaseAuthService _authService = FirebaseAuthService();
   final FirestoreService _db = FirestoreService();
+
+  UserModel? user;
 
   late Future<List<dynamic>> _transactions;
   late Future<List<dynamic>> _budgets;
@@ -52,6 +56,12 @@ class _HomePageState extends State<HomePage> {
     } else {
       return [];
     }
+  }
+
+  Future<void> _signOut() async {
+    await _authService.signOut(context);
+    showSnackBar(context, 'Logged out successfully.');
+    _navToSignUpScreen(context);
   }
 
   void _navToSignUpScreen(context) {
@@ -92,21 +102,24 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Check if user is authenticated
+  bool isUserLoggedIn = _authService.currentUser != null;
     return Scaffold(
       drawer: CustomDrawer(
-        username: "John Doe",
-        email: "johndoe@gmail.com",
-        profilePictureUrl: "",
-        navToUserDetails: () => _navToUserDetails(context),
-        onLogIn: () => _navToSignUpScreen(context),
-        isBackupEnabled: false,
-        onBackupToggle: (bool value) {},
-        onLogout: () {},
-        onExit: () {},
-      ),
+      username: isUserLoggedIn ? user?.fullName: null,
+      email: isUserLoggedIn ? user?.email : null,
+      profilePictureUrl: "",
+      navToUserDetails: () => _navToUserDetails(context),
+      onLogIn: () => _navToSignUpScreen(context),
+      isLoggedIn: isUserLoggedIn, // Pass the authentication state
+      isBackupEnabled: false,
+      onBackupToggle: (bool value) {},
+      onLogout: () => _signOut(),
+      onExit: () {},
+    ),
       appBar: AppBar(
         title:
-            const Text("Welcome Back, Annie", style: TextStyle(fontSize: 18)),
+            Text("Welcome Back, ${user?.fullName}", style: const TextStyle(fontSize: 18),),
         actions: [
           IconButton(
             icon: const Icon(Icons.add_circle_sharp, size: 20),

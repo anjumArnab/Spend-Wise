@@ -8,8 +8,8 @@ import 'package:spend_wise/widgets/custom_text_field.dart';
 import 'package:spend_wise/widgets/show_snack_bar.dart';
 
 class UserInfoForm extends StatefulWidget {
-  //final UserModel userData; // Accept user data from UserDetailsPage
-  const UserInfoForm({super.key});
+  final UserModel? userData; // Accept user data from UserProfilePage
+  const UserInfoForm({super.key, this.userData});
 
   @override
   State<UserInfoForm> createState() => _UserInfoFormState();
@@ -43,6 +43,21 @@ class _UserInfoFormState extends State<UserInfoForm> {
   String? _selectedGender;
   String? _selectedBloodGroup;
   String? _selectedLanguage;
+
+  @override
+  void initState() {
+    super.initState();
+    // Populate fields with existing user data if available
+    if (widget.userData != null) {
+      _fullname.text = widget.userData!.fullName;
+      // If phone exists in your UserModel (seems like it's not in the provided model)
+      // _phone.text = widget.userData!.phone;
+      _selectedGender = widget.userData!.gender;
+      _selectedBloodGroup = widget.userData!.bloodGroup;
+      _selectedLanguage = widget.userData!.preferredLanguage;
+    }
+  }
+
   // Helper method to create dropdown buttons with consistent styling
   Widget _buildDropdownButton<T>({
     required List<T> items,
@@ -88,30 +103,29 @@ class _UserInfoFormState extends State<UserInfoForm> {
       return;
     }
     try {
+      // Use the existing UID if updating an existing user
+      String uid = widget.userData?.uid ?? _authService.currentUser!.uid;
+      String email = widget.userData?.email ?? _authService.currentUser!.email!;
+      
       UserModel user = UserModel(
-        uid: _authService.currentUser!.uid,
-        email: _authService.currentUser!.email!,
+        uid: uid,
+        email: email,
         fullName: _fullname.text,
         gender: _selectedGender!,
         bloodGroup: _selectedBloodGroup!,
         preferredLanguage: _selectedLanguage!,
       );
 
-      await _db.saveUserData(user, _authService.currentUser!.uid);
-      _navToHomePage(context);
+      await _db.saveUserData(user, uid);
+      
+      // Go back to previous screen if editing, or to HomePage if new user
+      if (widget.userData != null) {
+        Navigator.pop(context);
+      } else {
+        _navToHomePage(context);
+      }
     } catch (e) {
       showSnackBar(context, 'Error saving user data: ${e.toString()}');
-    } finally {
-      // Clear the text fields and dropdowns after saving
-      _fullname.clear();
-      _phone.clear();
-      setState(() {
-        _selectedGender = null;
-        _selectedBloodGroup = null;
-        _selectedLanguage = null;
-      });
-      showSnackBar(context, 'User information saved successfully!');
-      // Optionally,  navigate to another screen or show a success message
     }
   }
 
@@ -119,7 +133,7 @@ class _UserInfoFormState extends State<UserInfoForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Spend Wise'),
+        title: Text(widget.userData != null ? 'Edit Profile' : 'Spend Wise'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -127,11 +141,15 @@ class _UserInfoFormState extends State<UserInfoForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Please enter information',
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+              Text(
+                widget.userData != null 
+                    ? 'Edit your information'
+                    : 'Please enter information',
+                style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
               ),
-              Text('for ${_authService.currentUser!.email}'),
+              Text(widget.userData != null
+                  ? 'for ${widget.userData!.email}'
+                  : 'for ${_authService.currentUser!.email}'),
               const SizedBox(height: 20),
 
               // Personal Information Section
@@ -230,7 +248,7 @@ class _UserInfoFormState extends State<UserInfoForm> {
               const SizedBox(height: 15),
 
               BorderButton(
-                text: 'Save',
+                text: widget.userData != null ? 'Update' : 'Save',
                 onPressed: _saveUserInfo,
               ),
               const SizedBox(height: 20),
