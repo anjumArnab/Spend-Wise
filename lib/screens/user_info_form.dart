@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spend_wise/models/user.dart';
-import 'package:spend_wise/screens/homepage.dart';
+import 'package:spend_wise/screens/finance_plan.dart';
 import 'package:spend_wise/services/authentication.dart';
 import 'package:spend_wise/services/cloud_store.dart';
 import 'package:spend_wise/widgets/border_button.dart';
@@ -78,11 +78,11 @@ class _UserInfoFormState extends State<UserInfoForm> {
     );
   }
 
-  void _navToHomePage(BuildContext context) {
+  void _navToFinancePlan(BuildContext context) {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => const HomePage(),
+        builder: (context) => const FinancePlan(),
       ),
     );
   }
@@ -106,7 +106,7 @@ class _UserInfoFormState extends State<UserInfoForm> {
       // Use the existing UID if updating an existing user
       String uid = widget.userData?.uid ?? _authService.currentUser!.uid;
       String email = widget.userData?.email ?? _authService.currentUser!.email!;
-      
+
       UserModel user = UserModel(
         uid: uid,
         email: email,
@@ -117,12 +117,12 @@ class _UserInfoFormState extends State<UserInfoForm> {
       );
 
       await _db.saveUserData(user, uid);
-      
+
       // Go back to previous screen if editing, or to HomePage if new user
       if (widget.userData != null) {
         Navigator.pop(context);
       } else {
-        _navToHomePage(context);
+        _navToFinancePlan(context);
       }
     } catch (e) {
       showSnackBar(context, 'Error saving user data: ${e.toString()}');
@@ -142,10 +142,11 @@ class _UserInfoFormState extends State<UserInfoForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.userData != null 
+                widget.userData != null
                     ? 'Edit your information'
                     : 'Please enter information',
-                style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
               ),
               Text(widget.userData != null
                   ? 'for ${widget.userData!.email}'
