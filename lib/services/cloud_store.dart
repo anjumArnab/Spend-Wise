@@ -44,10 +44,31 @@ class FirestoreService {
         .doc(uid)
         .collection('transactions')
         .snapshots()
-        .map((snapshot) =>
-            snapshot.docs.map((doc) => 
-              Payment.fromJson(doc.data(), docId: doc.id)
-            ).toList());
+        .map((snapshot) => snapshot.docs
+            .map((doc) => Payment.fromJson(doc.data(), docId: doc.id))
+            .toList());
+  }
+
+  // Get sum of all payments
+  Stream<double> getTotalAmount(String uid) {
+    return _db
+        .collection('payment')
+        .doc(uid)
+        .collection('transactions')
+        .snapshots()
+        .map((snapshot) {
+      final payments = snapshot.docs
+          .map((doc) => Payment.fromJson(doc.data(), docId: doc.id))
+          .toList();
+
+      // Sum all amounts
+      final total = payments.fold<double>(
+        0.0,
+        (sum, payment) => sum + payment.amount,
+      );
+
+      return total;
+    });
   }
 
   // Get all Budgets by user (now includes document ID in each Budget object)
@@ -57,10 +78,9 @@ class FirestoreService {
         .doc(uid)
         .collection('items')
         .snapshots()
-        .map((snapshot) =>
-            snapshot.docs.map((doc) => 
-              Budget.fromJson(doc.data(), docId: doc.id)
-            ).toList());
+        .map((snapshot) => snapshot.docs
+            .map((doc) => Budget.fromJson(doc.data(), docId: doc.id))
+            .toList());
   }
 
   // Update a specific Payment
