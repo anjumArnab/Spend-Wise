@@ -51,7 +51,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => const HomePage(),
+        builder: (context) => const HomePage(totalIncome: 0.0,),
       ),
     );
   }
