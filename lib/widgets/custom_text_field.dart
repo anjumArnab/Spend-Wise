@@ -7,14 +7,17 @@ class CustomTextField extends StatelessWidget{
   final String hintText;
   final TextInputType keyboardType;
   final bool readOnly;
+  final VoidCallback? onTap;
 
-  CustomTextField({
+  const CustomTextField({
+    super.key, 
     required this.controller,
     required this.hintText,
     required this.keyboardType,
     this.obsecureText = false,
     this.suffixIcon,
-    this.readOnly = false
+    this.readOnly = false,
+    this.onTap, 
   });
 
   @override
@@ -31,6 +34,7 @@ class CustomTextField extends StatelessWidget{
       keyboardType: keyboardType,
       obscureText: obsecureText,
       readOnly: readOnly,
+      onTap: onTap
     );
   }
 }
