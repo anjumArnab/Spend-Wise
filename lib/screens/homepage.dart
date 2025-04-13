@@ -187,7 +187,7 @@ class _HomePageState extends State<HomePage> {
             FutureBuilder<double>(
               future: _totalAmount,
               builder: (context, snapshot) {
-                double amount = snapshot.data ?? 0.0;
+                snapshot.data ?? 0.0;
                 return FinanceCard(
             balance: "\$${_calculatedBalance.toStringAsFixed(2)}",
             progressValue: _calculatedProgress,
