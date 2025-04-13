@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spend_wise/models/user.dart';
+import 'package:spend_wise/screens/change_email_page.dart';
 import 'package:spend_wise/screens/reset_password_page.dart';
 import 'package:spend_wise/screens/sign_up_screen.dart';
 import 'package:spend_wise/screens/user_info_form.dart';
@@ -40,7 +41,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const ResetPasswordPage(),
+        builder: (context) => const ChangeEmailPage(),
       ),
     );
   }
