@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spend_wise/models/user.dart';
 import 'package:spend_wise/screens/items_list_screen.dart';
-import 'package:spend_wise/screens/Transction_budget.dart';
+import 'package:spend_wise/screens/transction_budget.dart';
 import 'package:spend_wise/widgets/drawer.dart';
 import 'package:spend_wise/screens/sign_up_screen.dart';
 import 'package:spend_wise/screens/user_profile.dart';
@@ -14,7 +14,8 @@ import 'package:spend_wise/widgets/transaction_item.dart';
 import 'package:spend_wise/widgets/budget_progress.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final double totalIncome;
+  const HomePage({super.key, required this.totalIncome});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -30,17 +31,38 @@ class _HomePageState extends State<HomePage> {
 
   late Future<List<dynamic>> _transactions;
   late Future<List<dynamic>> _budgets;
+  late Future<double> _totalAmount;
+  double _calculatedBalance = 0.0;
+  double _calculatedProgress = 0.0;
 
   @override
   void initState() {
     super.initState();
     _loadData();
-    _getUserData();
   }
 
+
   void _loadData() {
-    _transactions = _getAllPayments();
-    _budgets = _getAllBudgets();
+    if (_authService.currentUser != null) {
+      _transactions = _getAllPayments();
+      _budgets = _getAllBudgets();
+      _totalAmount = _getTotalAmount().then((amount) {
+        double balance = widget.totalIncome - amount;
+        double progress = widget.totalIncome == 0 ? 0 : amount / widget.totalIncome;
+
+        setState(() {
+          _calculatedBalance = balance;
+          _calculatedProgress = progress;
+        });
+
+        return amount;
+      });
+      _getUserData();
+    } else {
+      _transactions = Future.value([]);
+      _budgets = Future.value([]);
+      _totalAmount = Future.value(0);
+    }
   }
 
   // Fetch Payments (Transaction items)
@@ -61,11 +83,17 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<double> _getTotalAmount() async {
+    if (_authService.currentUser != null) {
+      return await _db.getTotalAmount(_authService.currentUser!.uid).first;
+    } else {
+      return 0.0;
+    }
+  }
+
   Future<void> _getUserData() async {
     if (_authService.currentUser != null) {
       _userData = await _db.getUserData(_authService.currentUser!.uid);
-      setState(() {});
-    } else {
       setState(() {});
     }
   }
@@ -116,6 +144,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     // Check if user is authenticated
     bool isUserLoggedIn = _authService.currentUser != null;
+    String userName = _userData?.fullName.split(" ").first ?? "User";
+    
     return Scaffold(
       drawer: CustomDrawer(
         username: isUserLoggedIn ? _userData?.fullName : null,
@@ -131,7 +161,7 @@ class _HomePageState extends State<HomePage> {
       ),
       appBar: AppBar(
         title: Text(
-          "Welcome Back, ${_userData?.fullName.split(" ").first}",
+          "Welcome Back, $userName",
           style: const TextStyle(fontSize: 18),
         ),
         actions: [
@@ -153,11 +183,18 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
-            const FinanceCard(
-              balance: "\$32,450.00",
-              progressValue: 0.7,
-              income: "\$1,07,590",
-              transaction: "\$32,210",
+            
+            FutureBuilder<double>(
+              future: _totalAmount,
+              builder: (context, snapshot) {
+                double amount = snapshot.data ?? 0.0;
+                return FinanceCard(
+            balance: "\$${_calculatedBalance.toStringAsFixed(2)}",
+            progressValue: _calculatedProgress,
+            income: "\$${widget.totalIncome.toStringAsFixed(2)}",
+            transaction: "\$${(widget.totalIncome - _calculatedBalance).toStringAsFixed(2)}",
+          );
+              }
             ),
             const SizedBox(height: 15),
             Row(
