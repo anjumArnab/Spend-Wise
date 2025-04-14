@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spend_wise/models/user.dart';
+import 'package:spend_wise/screens/finance_plan.dart';
 import 'package:spend_wise/screens/items_list_screen.dart';
 import 'package:spend_wise/screens/transction_budget.dart';
 import 'package:spend_wise/widgets/drawer.dart';
@@ -140,6 +141,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _navToFinancePlan(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const FinancePlan()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // Check if user is authenticated
@@ -183,12 +191,12 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
-            
             FutureBuilder<double>(
               future: _totalAmount,
               builder: (context, snapshot) {
                 snapshot.data ?? 0.0;
                 return FinanceCard(
+                  onTap: () => _navToFinancePlan(context),
             balance: "\$${_calculatedBalance.toStringAsFixed(2)}",
             progressValue: _calculatedProgress,
             income: "\$${widget.totalIncome.toStringAsFixed(2)}",
