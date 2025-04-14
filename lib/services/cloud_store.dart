@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:spend_wise/models/budget.dart';
+import 'package:spend_wise/models/finance.dart';
 import 'package:spend_wise/models/payment.dart';
 import 'package:spend_wise/models/user.dart';
 
@@ -141,6 +142,24 @@ class FirestoreService {
     } catch (e) {
       print("Error deleting budget: $e");
       rethrow; // Rethrow so UI can handle the error
+    }
+  }
+
+  /// [Finance Plan]
+  /// Add or Update Finance Plan
+  /// This method will create a new plan if planId is null, otherwise update existing plan
+  Future<String> saveFinancePlan(String uid, FinancePlanModel plan,
+      {String? planId}) async {
+    try {
+      final planRef = planId == null
+          ? _db.collection('finance').doc(uid).collection('plans').doc()
+          : _db.collection('finance').doc(uid).collection('plans').doc(planId);
+
+      await planRef.set(plan.toJson(), SetOptions(merge: true));
+      return planRef.id; // Return the document ID for reference
+    } catch (e) {
+      print("Error saving finance plan: $e");
+      rethrow;
     }
   }
 
