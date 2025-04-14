@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:spend_wise/models/income_source.dart';
 import 'package:spend_wise/screens/homepage.dart';
+import 'package:spend_wise/services/authentication.dart';
+import 'package:spend_wise/services/cloud_store.dart';
 import 'package:spend_wise/widgets/border_button.dart';
 import 'package:spend_wise/widgets/custom_text_field.dart';
 import 'package:spend_wise/widgets/show_snack_bar.dart';
+import 'package:spend_wise/models/finance.dart';
+
+// UI class for handling income source form fields
+class IncomeSourceField {
+  final TextEditingController nameController;
+  final TextEditingController amountController;
+
+  IncomeSourceField({
+    required this.nameController,
+    required this.amountController,
+  });
+}
 
 class FinancePlan extends StatefulWidget {
   const FinancePlan({super.key});
@@ -15,8 +30,11 @@ class _FinancePlanState extends State<FinancePlan> {
   final TextEditingController _initialDateController = TextEditingController();
   final TextEditingController _finalDateController = TextEditingController();
 
+  final FirebaseAuthService _authService = FirebaseAuthService();
+  final FirestoreService _db = FirestoreService();
+
   // List to hold all income source controllers
-  final List<IncomeSource> _incomeSources = [];
+  final List<IncomeSourceField> _incomeSources = [];
   double _totalIncome = 0.0;
   bool _areAllFieldsFilled = false;
 
@@ -60,7 +78,7 @@ class _FinancePlanState extends State<FinancePlan> {
 
     setState(() {
       _incomeSources.add(
-        IncomeSource(
+        IncomeSourceField(
           nameController: nameController,
           amountController: amountController,
         ),
@@ -144,6 +162,7 @@ class _FinancePlanState extends State<FinancePlan> {
       });
     }
   }
+  
   void _navToHomePage(BuildContext context) {
     Navigator.pushReplacement(
       context,
@@ -153,7 +172,7 @@ class _FinancePlanState extends State<FinancePlan> {
     );
   }
 
-  void _savePlan() {
+  void _saveFinancePlan() async {
     // Remove the last empty field before saving
     if (_incomeSources.isNotEmpty) {
       final lastSource = _incomeSources.last;
@@ -163,8 +182,40 @@ class _FinancePlanState extends State<FinancePlan> {
         _incomeSources.removeLast();
       }
     }
-    _navToHomePage(context);
-    showSnackBar(context,'Finance plan saved successfully');
+    
+    try {
+      // Get current user ID
+      final user = _authService.currentUser;
+      if (user == null) {
+        showSnackBar(context, 'User not logged in');
+        return;
+      }
+      
+      // Convert UI data model to persistence data model
+      final List<IncomeSource> sources = _incomeSources.map((source) {
+        return IncomeSource(
+          name: source.nameController.text.trim(),
+          amount: double.tryParse(source.amountController.text.trim()) ?? 0.0,
+        );
+      }).toList();
+      
+      // Create the finance plan object
+      final plan = FinancePlanModel(
+        startDate: DateFormat('yyyy-MM-dd').parse(_initialDateController.text),
+        endDate: DateFormat('yyyy-MM-dd').parse(_finalDateController.text),
+        incomeSources: sources,
+        totalIncome: _totalIncome,
+      );
+      
+      await _db.saveFinancePlan(user.uid, plan);
+      
+      // Navigate to homepage and show success message
+      _navToHomePage(context);
+      showSnackBar(context, 'Finance plan saved successfully');
+    } catch (e) {
+      showSnackBar(context, 'Error saving finance plan: $e');
+      print("Error in _saveFinancePlan: $e");
+    }
   }
 
   @override
@@ -268,7 +319,7 @@ class _FinancePlanState extends State<FinancePlan> {
                   ),
                   BorderButton(
                     text: 'Done',
-                    onPressed: _areAllFieldsFilled ? _savePlan : null,
+                    onPressed: _areAllFieldsFilled ? _saveFinancePlan : null,
                   ),
                 ],
               ),
@@ -278,14 +329,4 @@ class _FinancePlanState extends State<FinancePlan> {
       ),
     );
   }
-}
-
-class IncomeSource {
-  final TextEditingController nameController;
-  final TextEditingController amountController;
-
-  IncomeSource({
-    required this.nameController,
-    required this.amountController,
-  });
 }
