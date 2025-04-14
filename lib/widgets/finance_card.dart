@@ -6,6 +6,7 @@ class FinanceCard extends StatelessWidget {
   final double progressValue;
   final String income;
   final String transaction;
+  final VoidCallback? onTap;
 
   const FinanceCard({
     super.key,
@@ -14,6 +15,7 @@ class FinanceCard extends StatelessWidget {
     required this.progressValue,
     required this.income,
     required this.transaction,
+    this.onTap
   });
 
   @override
@@ -66,29 +68,32 @@ class FinanceCard extends StatelessWidget {
   }
 
   Widget _infoBox({required String title, required String value}) {
-    return Container(
-      width: 130,
-      height: 60,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black),
-        borderRadius: BorderRadius.circular(3),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(title,
-                style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12)),
-            const SizedBox(height: 4),
-            Text(value,
-                style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold)),
-          ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 130,
+        height: 60,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black),
+          borderRadius: BorderRadius.circular(3),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(title,
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12)),
+              const SizedBox(height: 4),
+              Text(value,
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold)),
+            ],
+          ),
         ),
       ),
     );
