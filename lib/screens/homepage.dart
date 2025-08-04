@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:spend_wise/models/user.dart';
-import 'package:spend_wise/screens/finance_plan.dart';
-import 'package:spend_wise/screens/items_list_screen.dart';
-import 'package:spend_wise/screens/transction_budget.dart';
-import 'package:spend_wise/widgets/drawer.dart';
-import 'package:spend_wise/screens/sign_up_screen.dart';
-import 'package:spend_wise/screens/user_profile.dart';
-import 'package:spend_wise/services/authentication.dart';
-import 'package:spend_wise/services/cloud_store.dart';
-import 'package:spend_wise/widgets/category_tab.dart';
-import 'package:spend_wise/widgets/finance_card.dart';
-import 'package:spend_wise/widgets/show_snack_bar.dart';
-import 'package:spend_wise/widgets/transaction_item.dart';
-import 'package:spend_wise/widgets/budget_progress.dart';
+import '../models/user.dart';
+import '../screens/finance_plan.dart';
+import '../screens/items_list_screen.dart';
+import '../screens/transction_budget.dart';
+import '../widgets/drawer.dart';
+import '../screens/sign_up_screen.dart';
+import '../screens/user_profile.dart';
+import '../services/authentication.dart';
+import '../services/cloud_store.dart';
+import '../widgets/category_tab.dart';
+import '../widgets/finance_card.dart';
+import '../widgets/show_snack_bar.dart';
+import '../widgets/transaction_item.dart';
+import '../widgets/budget_progress.dart';
 
 class HomePage extends StatefulWidget {
   final double totalIncome;
@@ -42,14 +42,14 @@ class _HomePageState extends State<HomePage> {
     _loadData();
   }
 
-
   void _loadData() {
     if (_authService.currentUser != null) {
       _transactions = _getAllPayments();
       _budgets = _getAllBudgets();
       _totalAmount = _getTotalAmount().then((amount) {
         double balance = widget.totalIncome - amount;
-        double progress = widget.totalIncome == 0 ? 0 : amount / widget.totalIncome;
+        double progress =
+            widget.totalIncome == 0 ? 0 : amount / widget.totalIncome;
 
         setState(() {
           _calculatedBalance = balance;
@@ -153,7 +153,7 @@ class _HomePageState extends State<HomePage> {
     // Check if user is authenticated
     bool isUserLoggedIn = _authService.currentUser != null;
     String userName = _userData?.fullName.split(" ").first ?? "User";
-    
+
     return Scaffold(
       drawer: CustomDrawer(
         username: isUserLoggedIn ? _userData?.fullName : null,
@@ -192,18 +192,18 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             FutureBuilder<double>(
-              future: _totalAmount,
-              builder: (context, snapshot) {
-                snapshot.data ?? 0.0;
-                return FinanceCard(
-                  onTap: () => _navToFinancePlan(context),
-            balance: "\$${_calculatedBalance.toStringAsFixed(2)}",
-            progressValue: _calculatedProgress,
-            income: "\$${widget.totalIncome.toStringAsFixed(2)}",
-            transaction: "\$${(widget.totalIncome - _calculatedBalance).toStringAsFixed(2)}",
-          );
-              }
-            ),
+                future: _totalAmount,
+                builder: (context, snapshot) {
+                  snapshot.data ?? 0.0;
+                  return FinanceCard(
+                    onTap: () => _navToFinancePlan(context),
+                    balance: "\$${_calculatedBalance.toStringAsFixed(2)}",
+                    progressValue: _calculatedProgress,
+                    income: "\$${widget.totalIncome.toStringAsFixed(2)}",
+                    transaction:
+                        "\$${(widget.totalIncome - _calculatedBalance).toStringAsFixed(2)}",
+                  );
+                }),
             const SizedBox(height: 15),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

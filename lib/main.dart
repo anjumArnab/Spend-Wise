@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:spend_wise/firebase_options.dart';
-import 'package:spend_wise/screens/sign_up_screen.dart';
+import '../firebase_options.dart';
+import '../screens/sign_up_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,12 +19,9 @@ class SpendWise extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        textTheme: GoogleFonts.poppinsTextTheme()
-      ),
+      theme: ThemeData(textTheme: GoogleFonts.poppinsTextTheme()),
       title: 'Spend Wise',
       home: const SignUpScreen(),
     );
   }
 }
-

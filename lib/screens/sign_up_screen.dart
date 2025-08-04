@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:spend_wise/screens/homepage.dart';
-import 'package:spend_wise/screens/user_info_form.dart';
-import 'package:spend_wise/services/authentication.dart';
-import 'package:spend_wise/widgets/border_button.dart';
-import 'package:spend_wise/widgets/show_snack_bar.dart';
-import 'package:spend_wise/widgets/text_field.dart';
+import '../screens/homepage.dart';
+import '../screens/user_info_form.dart';
+import '../services/authentication.dart';
+import '../widgets/border_button.dart';
+import '../widgets/show_snack_bar.dart';
+import '../widgets/text_field.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -38,7 +38,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
-  void  _navToUserInfoForm(BuildContext context) {
+  void _navToUserInfoForm(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -51,7 +51,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => const HomePage(totalIncome: 0.0,),
+        builder: (context) => const HomePage(
+          totalIncome: 0.0,
+        ),
       ),
     );
   }
@@ -97,8 +99,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         final emailSent = await _authService.sendEmailVerification(context);
 
         if (emailSent && mounted) {
-         // _navToHomePage(context);
-         _navToUserInfoForm(context);
+          // _navToHomePage(context);
+          _navToUserInfoForm(context);
         }
       }
     } catch (e) {
@@ -242,7 +244,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget buildToggleButton(String text, bool isSignUp) {
     // Check if this button matches the current selection state
     bool isSelected = _isSignUp == isSignUp;
-    
+
     return InkWell(
       onTap: () => setState(() => _isSignUp = isSignUp),
       child: Container(

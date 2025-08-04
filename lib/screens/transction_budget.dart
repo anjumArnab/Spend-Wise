@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:spend_wise/models/budget.dart';
-import 'package:spend_wise/models/payment.dart';
-import 'package:spend_wise/services/authentication.dart';
-import 'package:spend_wise/services/cloud_store.dart';
-import 'package:spend_wise/widgets/transaction_budget_bottom_sheet.dart';
+import '../models/budget.dart';
+import '../models/payment.dart';
+import '../services/authentication.dart';
+import '../services/cloud_store.dart';
+import '../widgets/transaction_budget_bottom_sheet.dart';
 
 class TransctionBudget extends StatefulWidget {
   final String title;

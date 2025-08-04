@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:spend_wise/models/income_source.dart';
-import 'package:spend_wise/screens/homepage.dart';
-import 'package:spend_wise/services/authentication.dart';
-import 'package:spend_wise/services/cloud_store.dart';
-import 'package:spend_wise/widgets/border_button.dart';
-import 'package:spend_wise/widgets/custom_text_field.dart';
-import 'package:spend_wise/widgets/show_snack_bar.dart';
-import 'package:spend_wise/models/finance.dart';
+import '../models/income_source.dart';
+import '../screens/homepage.dart';
+import '../services/authentication.dart';
+import '../services/cloud_store.dart';
+import '../widgets/border_button.dart';
+import '../widgets/custom_text_field.dart';
+import '../widgets/show_snack_bar.dart';
+import '../models/finance.dart';
 
 // UI class for handling income source form fields
 class IncomeSourceField {
@@ -162,12 +162,14 @@ class _FinancePlanState extends State<FinancePlan> {
       });
     }
   }
-  
+
   void _navToHomePage(BuildContext context) {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => HomePage(totalIncome: _totalIncome,),
+        builder: (context) => HomePage(
+          totalIncome: _totalIncome,
+        ),
       ),
     );
   }
@@ -182,7 +184,7 @@ class _FinancePlanState extends State<FinancePlan> {
         _incomeSources.removeLast();
       }
     }
-    
+
     try {
       // Get current user ID
       final user = _authService.currentUser;
@@ -190,7 +192,7 @@ class _FinancePlanState extends State<FinancePlan> {
         showSnackBar(context, 'User not logged in');
         return;
       }
-      
+
       // Convert UI data model to persistence data model
       final List<IncomeSource> sources = _incomeSources.map((source) {
         return IncomeSource(
@@ -198,7 +200,7 @@ class _FinancePlanState extends State<FinancePlan> {
           amount: double.tryParse(source.amountController.text.trim()) ?? 0.0,
         );
       }).toList();
-      
+
       // Create the finance plan object
       final plan = FinancePlanModel(
         startDate: DateFormat('yyyy-MM-dd').parse(_initialDateController.text),
@@ -206,9 +208,9 @@ class _FinancePlanState extends State<FinancePlan> {
         incomeSources: sources,
         totalIncome: _totalIncome,
       );
-      
+
       await _db.saveFinancePlan(user.uid, plan);
-      
+
       // Navigate to homepage and show success message
       _navToHomePage(context);
       showSnackBar(context, 'Finance plan saved successfully');

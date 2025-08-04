@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:spend_wise/models/user.dart';
-import 'package:spend_wise/screens/change_email_page.dart';
-import 'package:spend_wise/screens/reset_password_page.dart';
-import 'package:spend_wise/screens/sign_up_screen.dart';
-import 'package:spend_wise/screens/user_info_form.dart';
-import 'package:spend_wise/services/authentication.dart';
-import 'package:spend_wise/services/cloud_store.dart';
-import 'package:spend_wise/widgets/border_button.dart';
-import 'package:spend_wise/widgets/show_snack_bar.dart';
+import '../models/user.dart';
+import '../screens/change_email_page.dart';
+import '../screens/reset_password_page.dart';
+import '../screens/sign_up_screen.dart';
+import '../screens/user_info_form.dart';
+import '../services/authentication.dart';
+import '../services/cloud_store.dart';
+import '../widgets/border_button.dart';
+import '../widgets/show_snack_bar.dart';
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});

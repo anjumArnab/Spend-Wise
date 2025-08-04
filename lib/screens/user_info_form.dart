@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:spend_wise/models/user.dart';
-import 'package:spend_wise/screens/finance_plan.dart';
-import 'package:spend_wise/services/authentication.dart';
-import 'package:spend_wise/services/cloud_store.dart';
-import 'package:spend_wise/widgets/border_button.dart';
-import 'package:spend_wise/widgets/custom_text_field.dart';
-import 'package:spend_wise/widgets/show_snack_bar.dart';
+import '../models/user.dart';
+import '../screens/finance_plan.dart';
+import '../services/authentication.dart';
+import '../services/cloud_store.dart';
+import '../widgets/border_button.dart';
+import '../widgets/custom_text_field.dart';
+import '../widgets/show_snack_bar.dart';
 
 class UserInfoForm extends StatefulWidget {
   final UserModel? userData; // Accept user data from UserProfilePage

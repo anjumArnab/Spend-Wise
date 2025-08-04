@@ -1,8 +1,7 @@
-
 import 'package:flutter/material.dart';
-import 'package:spend_wise/services/authentication.dart';
-import 'package:spend_wise/widgets/border_button.dart';
-import 'package:spend_wise/widgets/custom_text_field.dart';
+import '../services/authentication.dart';
+import '../widgets/border_button.dart';
+import '../widgets/custom_text_field.dart';
 
 class ChangeEmailPage extends StatefulWidget {
   const ChangeEmailPage({super.key});
