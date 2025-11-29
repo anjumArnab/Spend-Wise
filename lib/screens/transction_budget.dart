@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spend_wise/screens/receipt_scanner_screen.dart';
 import '../models/budget.dart';
 import '../models/payment.dart';
 import '../services/authentication.dart';
@@ -144,6 +145,16 @@ class _TransctionBudgetState extends State<TransctionBudget> {
     );
   }
 
+  void _showReceiptScannerScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            ReceiptScannerScreen(isPayment: widget.title == 'Transaction'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -195,12 +206,23 @@ class _TransctionBudgetState extends State<TransctionBudget> {
             GestureDetector(
               onTap: _showAddCategoryDialog,
               child: Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(7),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
                   borderRadius: BorderRadius.circular(3),
                 ),
                 child: const Icon(Icons.add, size: 24),
+              ),
+            ),
+            GestureDetector(
+              onTap: _showReceiptScannerScreen,
+              child: Container(
+                padding: const EdgeInsets.all(7),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+                child: const Icon(Icons.image, size: 24),
               ),
             ),
           ],
