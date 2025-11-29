@@ -1,24 +1,38 @@
 import 'package:flutter/material.dart';
 
-Widget buildTextField({
-  required TextEditingController controller,
-  required String labelText,
-  TextInputType keyboardType = TextInputType.text,
-  bool obscureText = false,
-  bool readOnly = false,
-  Widget? suffixIcon,
-  VoidCallback? onTap,
-}) {
-  return TextFormField(
-    controller: controller,
-    keyboardType: keyboardType,
-    obscureText: obscureText,
-    readOnly: readOnly,
-    decoration: InputDecoration(
-      labelText: labelText,
-      border: const UnderlineInputBorder(),
-      suffixIcon: suffixIcon,
-    ),
-    onTap: onTap,
-  );
+class AppTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String labelText;
+  final TextInputType keyboardType;
+  final bool obscureText;
+  final bool readOnly;
+  final Widget? suffixIcon;
+  final VoidCallback? onTap;
+
+  const AppTextField({
+    super.key,
+    required this.controller,
+    required this.labelText,
+    this.keyboardType = TextInputType.text,
+    this.obscureText = false,
+    this.readOnly = false,
+    this.suffixIcon,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      obscureText: obscureText,
+      readOnly: readOnly,
+      decoration: InputDecoration(
+        labelText: labelText,
+        border: const UnderlineInputBorder(),
+        suffixIcon: suffixIcon,
+      ),
+      onTap: onTap,
+    );
+  }
 }
