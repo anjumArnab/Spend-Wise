@@ -190,12 +190,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ],
             ),
             const SizedBox(height: 20),
-            buildTextField(
+            AppTextField(
                 controller: _emailController,
                 labelText: "Email",
                 keyboardType: TextInputType.emailAddress),
             const SizedBox(height: 10),
-            buildTextField(
+            AppTextField(
               controller: _passwordController,
               labelText: "Password",
               obscureText: !_isPasswordVisible,
@@ -207,7 +207,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
             const SizedBox(height: 10),
             if (_isSignUp)
-              buildTextField(
+              AppTextField(
                 controller: _confirmPasswordController,
                 labelText: "Confirm Password",
                 obscureText: !_isConfirmPasswordVisible,
