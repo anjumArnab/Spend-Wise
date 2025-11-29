@@ -8,11 +8,10 @@ import '../screens/sign_up_screen.dart';
 import '../screens/user_profile.dart';
 import '../services/authentication.dart';
 import '../services/cloud_store.dart';
-import '../widgets/category_tab.dart';
-import '../widgets/finance_card.dart';
 import '../widgets/show_snack_bar.dart';
 import '../widgets/transaction_item.dart';
 import '../widgets/budget_progress.dart';
+import '../widgets/finance_card.dart';
 
 class HomePage extends StatefulWidget {
   final double totalIncome;
@@ -148,6 +147,35 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Build Toggle Button similar to SignUpScreen
+  Widget buildToggleButton(String text, String category) {
+    // Check if this button matches the current selection state
+    bool isSelected = _selectedCategory == category;
+
+    return Expanded(
+      child: InkWell(
+        onTap: () => _setSelectedCategory(category),
+        child: Container(
+          height: 45,
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.black : Colors.transparent,
+            border: Border.all(color: Colors.black, width: 1.5),
+            borderRadius: BorderRadius.circular(7),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: isSelected ? Colors.white : Colors.black,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // Check if user is authenticated
@@ -205,26 +233,16 @@ class _HomePageState extends State<HomePage> {
                   );
                 }),
             const SizedBox(height: 15),
+            
+            // Toggle Button Row for Transaction, Budget, Analysis
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CategoryTab(
-                  label: 'Transaction',
-                  selectedCategory: _selectedCategory,
-                  onTap: _setSelectedCategory,
-                ),
-                const SizedBox(width: 8),
-                CategoryTab(
-                  label: 'Budget',
-                  selectedCategory: _selectedCategory,
-                  onTap: _setSelectedCategory,
-                ),
-                const SizedBox(width: 8),
-                CategoryTab(
-                  label: 'Analysis',
-                  selectedCategory: _selectedCategory,
-                  onTap: _setSelectedCategory,
-                ),
+                buildToggleButton("Transaction", "Transaction"),
+                const SizedBox(width: 10),
+                buildToggleButton("Budget", "Budget"),
+                const SizedBox(width: 10),
+                buildToggleButton("Analysis", "Analysis"),
               ],
             ),
 
