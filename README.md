@@ -1,26 +1,12 @@
 # Spend Wise
-Spend Wise is a comprehensive expense tracker app that empowers users to manage their expenses and income efficiently. With a clean and intuitive interface, users can track their financial transactions and maintain better control over their budget.
+Spend Wise is an expense tracker app that allow users to manage their expenses and income efficiently. With a clean and intuitive interface, users can track their financial transactions and maintain better control over their budget.
 
 ## Features
-- **Core Functionality**
-	- **Expense Tracking:** Record and categorize all your expenses with detailed information including amount, category, payment method, date, and time
+- **Core Functionality:** Track and categorize all expenses with details such as amount, category, and payment method. Set flexible budgets to manage your spending and stay within goals. Monitor multiple income sources. Use pre-defined categories such as Housing, Groceries, Healthcare, and more for a streamlined experience.
 
-	- **Budget Management:** Set budgets for different categories with customizable date ranges to stay within your financial goals
+- **AI-Powered Receipt Scanner:** Capture or upload receipts and let the app extract text automatically using Google ML Kit. Parsed details such as amounts, dates, payment methods, and merchant info — are identified with Gemini AI. The system suggests categories automatically based on context. Users can review and edit all extracted data before saving.
 
-	- **Income Monitoring:** Track multiple income sources and visualize your total income over time
+- **User Management:** The app provides comprehensive user account management using Firebase Authentication. Users can securely sign up and log in with their email and password, with email verification available to enhance account security.
 
-	- **Category Organization:** Pre-defined categories including Housing, Utilities, Groceries, Healthcare, Transportation, Entertainment, and more 
-
-- **AI-Powered Receipt Scanner**
-	- **Smart Text Extraction:** Capture receipts using your camera or select from gallery - the app automatically extracts text using Google ML Kit
-
-	- **Intelligent Parsing:** Powered by Google Gemini AI to intelligently parse receipt data and extract: Transaction amounts, Payment methods, Dates and times, Merchant categories
-
-	- **Auto-Categorization:** AI automatically suggests the most appropriate category based on merchant name and context
-
-	- **Editable Results:** Review and edit extracted data before saving to ensure accuracy
-
-- **User Management:** The app provides comprehensive user account management powered by Firebase Authentication. Users can securely sign up and log in with their email and password, with email verification available to enhance account security.
-
-- **Cloud Storage:** All data is stored in Cloud Firestore and synced across devices in real-time
+- **Cloud Storage:** All data is stored in Cloud Firestore and synced across devices in real-time.
 
