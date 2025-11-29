@@ -45,7 +45,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AuthSync'),
+        title: const Text('Spend Wise'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),

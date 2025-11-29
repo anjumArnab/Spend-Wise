@@ -49,7 +49,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       _passwordController.clear();
       _confirmPasswordController.clear();
 
-      Navigator.pop(context); // Navigate back on success
+      Navigator.pop(context);
     }
   }
 
@@ -57,7 +57,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("AuthSync"),
+        title: const Text("Spend Wise"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
