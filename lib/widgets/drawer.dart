@@ -63,11 +63,6 @@ class CustomDrawer extends StatelessWidget {
               title: const Text('Profile'),
               onTap: navToUserDetails,
             ),
-            SwitchListTile(
-              title: const Text('Enable Backup'),
-              value: isBackupEnabled,
-              onChanged: onBackupToggle,
-            ),
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Logout'),
