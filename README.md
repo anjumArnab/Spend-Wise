@@ -12,7 +12,6 @@ Spend Wise is a comprehensive expense tracker app that empowers users to manage 
 	- Category Organization: Pre-defined categories including Housing, Utilities, Groceries, Healthcare, Transportation, Entertainment, and more 
 
 - AI-Powered Receipt Scanner
-
 	-Smart Text Extraction: Capture receipts using your camera or select from gallery - the app automatically extracts text using Google ML Kit
 
 	- Intelligent Parsing: Powered by Google Gemini AI to intelligently parse receipt data and extract: Transaction amounts, Payment methods, Dates and times, Merchant categories
