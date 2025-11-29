@@ -9,7 +9,6 @@ import '../widgets/custom_text_field.dart';
 import '../widgets/show_snack_bar.dart';
 import '../models/finance.dart';
 
-// UI class for handling income source form fields
 class IncomeSourceField {
   final TextEditingController nameController;
   final TextEditingController amountController;
